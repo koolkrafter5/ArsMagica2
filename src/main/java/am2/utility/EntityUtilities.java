@@ -112,7 +112,7 @@ public class EntityUtilities{
 				float speed = entityliving.getAIMoveSpeed();
 				if (speed <= 0) speed = 1.0f;
 				entityliving.tasks.addTask(3, new EntityAIAttackOnCollide(entityliving, EntityMob.class, speed, true));
-				entityliving.tasks.addTask(3, new EntityAIAttackOnCollide(entityliving, IMob.class, speed, true));
+				entityliving.tasks.addTask(3, new EntityAIAttackOnCollide(entityliving, (Class) IMob.class, speed, true));
 				entityliving.tasks.addTask(3, new EntityAIAttackOnCollide(entityliving, EntitySlime.class, speed, true));
 			}
 

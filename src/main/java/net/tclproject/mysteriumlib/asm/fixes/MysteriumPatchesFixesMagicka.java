@@ -429,7 +429,7 @@ public class MysteriumPatchesFixesMagicka{
 	public static void changeClientTickratePublic(float ticksPerSecond) {
 		MinecraftServer server = MinecraftServer.getServer();
 		if((server != null) && (server.getConfigurationManager() != null)) { // Is a server or singleplayer
-			for(EntityPlayer p : (List<EntityPlayer>)server.getConfigurationManager().playerEntityList) {
+			for(EntityPlayer p : server.getConfigurationManager().playerEntityList) {
 				changeClientTickratePublic(p, ticksPerSecond);
 			}
 		} else { // Is in menu or a player connected in a server. We can say this is client.

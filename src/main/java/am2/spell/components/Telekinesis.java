@@ -21,6 +21,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
@@ -49,7 +50,8 @@ public class Telekinesis implements ISpellComponent{
 
 		double distance = 16;
 		int hDist = 3;
-		List<Entity> entities = world.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getBoundingBox(impactX - distance, impactY - hDist, impactZ - distance, impactX + distance, impactY + hDist, impactZ + distance));
+		List<Entity> entities = new ArrayList<>();
+		entities.addAll(world.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getBoundingBox(impactX - distance, impactY - hDist, impactZ - distance, impactX + distance, impactY + hDist, impactZ + distance)));
 		entities.addAll(world.getEntitiesWithinAABB(EntityXPOrb.class, AxisAlignedBB.getBoundingBox(impactX - distance, impactY - hDist, impactZ - distance, impactX + distance, impactY + hDist, impactZ + distance)));
 		for (Entity e : entities){
 			if (e.ticksExisted < 20){

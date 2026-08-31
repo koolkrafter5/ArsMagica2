@@ -57,12 +57,12 @@ public class Storm implements ISpellComponent{
 					EntityLightningBolt bolt = new EntityLightningBolt(world, randPosX, posY, randPosZ);
 					world.addWeatherEffect(bolt);
 				}else if (random < 80){
-					List<Entity> entities = world.getEntitiesWithinAABB(IMob.class, caster.boundingBox.expand(xzradius, 10D, xzradius));
+					List<IMob> entities = world.getEntitiesWithinAABB(IMob.class, caster.boundingBox.expand(xzradius, 10D, xzradius));
 					if (entities.size() <= 0){
 						return;
 					}
-					Entity target = entities.get(world.rand.nextInt(entities.size()));
-					if (target != null && world.canBlockSeeTheSky((int)target.posX, (int)target.posY, (int)target.posZ)){
+					IMob mob = entities.get(world.rand.nextInt(entities.size()));
+					if (mob instanceof Entity target && world.canBlockSeeTheSky((int)target.posX, (int)target.posY, (int)target.posZ)){
 						if (caster instanceof EntityPlayer){
 							target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)caster), 1);
 						}
