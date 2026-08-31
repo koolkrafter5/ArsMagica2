@@ -1,49 +1,51 @@
 package am2.buffs;
 
-import am2.utility.EntityUtilities;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class BuffEffectCharmed extends BuffEffect{
+import am2.utility.EntityUtilities;
 
-	private final int particleTicks;
+public class BuffEffectCharmed extends BuffEffect {
 
-	public static final int CHARM_TO_PLAYER = 1;
-	public static final int CHARM_TO_MONSTER = 2;
+    private final int particleTicks;
 
-	private EntityLivingBase charmer;
+    public static final int CHARM_TO_PLAYER = 1;
+    public static final int CHARM_TO_MONSTER = 2;
 
-	public BuffEffectCharmed(int duration, int amplifier){
-		super(BuffList.charmed.id, duration, amplifier);
-		particleTicks = 0;
-	}
+    private EntityLivingBase charmer;
 
-	public void setCharmer(EntityLivingBase entity){
-		charmer = entity;
-	}
+    public BuffEffectCharmed(int duration, int amplifier) {
+        super(BuffList.charmed.id, duration, amplifier);
+        particleTicks = 0;
+    }
 
-	@Override
-	public void applyEffect(EntityLivingBase entityliving){
-		if (getAmplifier() + 1 == CHARM_TO_PLAYER && entityliving instanceof EntityCreature && charmer instanceof EntityPlayer){
-			EntityUtilities.makeSummon_PlayerFaction((EntityCreature)entityliving, (EntityPlayer)charmer, true);
-		}else if (getAmplifier() + 1 == CHARM_TO_MONSTER && entityliving instanceof EntityCreature){
-			EntityUtilities.makeSummon_MonsterFaction((EntityCreature)entityliving, true);
-		}
-		EntityUtilities.setOwner(entityliving, charmer);
-		EntityUtilities.setSummonDuration(entityliving, -1);
-	}
+    public void setCharmer(EntityLivingBase entity) {
+        charmer = entity;
+    }
 
-	@Override
-	public void stopEffect(EntityLivingBase entityliving){
-		if (entityliving instanceof EntityCreature){
-			EntityUtilities.revertAI((EntityCreature)entityliving);
-		}
-	}
+    @Override
+    public void applyEffect(EntityLivingBase entityliving) {
+        if (getAmplifier() + 1 == CHARM_TO_PLAYER && entityliving instanceof EntityCreature
+            && charmer instanceof EntityPlayer) {
+            EntityUtilities.makeSummon_PlayerFaction((EntityCreature) entityliving, (EntityPlayer) charmer, true);
+        } else if (getAmplifier() + 1 == CHARM_TO_MONSTER && entityliving instanceof EntityCreature) {
+            EntityUtilities.makeSummon_MonsterFaction((EntityCreature) entityliving, true);
+        }
+        EntityUtilities.setOwner(entityliving, charmer);
+        EntityUtilities.setSummonDuration(entityliving, -1);
+    }
 
-	@Override
-	protected String spellBuffName(){
-		return "Charmed";
-	}
+    @Override
+    public void stopEffect(EntityLivingBase entityliving) {
+        if (entityliving instanceof EntityCreature) {
+            EntityUtilities.revertAI((EntityCreature) entityliving);
+        }
+    }
+
+    @Override
+    protected String spellBuffName() {
+        return "Charmed";
+    }
 
 }

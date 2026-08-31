@@ -1,27 +1,28 @@
 package am2.blocks;
 
-import am2.blocks.tileentities.TileEntityFlickerLure;
-import am2.texture.ResourceManager;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockFlickerLure extends PoweredBlock{
+import am2.blocks.tileentities.TileEntityFlickerLure;
+import am2.texture.ResourceManager;
 
-	public BlockFlickerLure(){
-		super(Material.rock);
-		setHardness(2.0f);
-		setResistance(2.0f);
-	}
+public class BlockFlickerLure extends PoweredBlock {
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int i){
-		return new TileEntityFlickerLure();
-	}
+    public BlockFlickerLure() {
+        super(Material.rock);
+        setHardness(2.0f);
+        setResistance(2.0f);
+    }
 
-	@Override
-	public void registerBlockIcons(IIconRegister par1IconRegister){
-		this.blockIcon = ResourceManager.RegisterTexture("flicker_lure", par1IconRegister);
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return new TileEntityFlickerLure();
+    }
+
+    @Override
+    public void registerBlockIcons(IIconRegister par1IconRegister) {
+        this.blockIcon = ResourceManager.RegisterTexture("flicker_lure", par1IconRegister);
+    }
 }

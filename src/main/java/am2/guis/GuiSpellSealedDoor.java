@@ -1,39 +1,42 @@
 package am2.guis;
 
-import am2.blocks.tileentities.TileEntitySpellSealedDoor;
-import am2.containers.ContainerSpellSealedDoor;
-import am2.texture.ResourceManager;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
-public class GuiSpellSealedDoor extends GuiContainer{
+import am2.blocks.tileentities.TileEntitySpellSealedDoor;
+import am2.containers.ContainerSpellSealedDoor;
+import am2.texture.ResourceManager;
 
-	GuiButton radiusButton;
+public class GuiSpellSealedDoor extends GuiContainer {
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", ResourceManager.GetGuiTexturePath("astralBarrierGui.png"));
+    GuiButton radiusButton;
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int i, int j){
-		mc.renderEngine.bindTexture(background);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		int l = (width - xSize) / 2;
-		int i1 = (height - ySize) / 2;
-		drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
-	}
+    private static final ResourceLocation background = new ResourceLocation(
+        "arsmagica2",
+        ResourceManager.GetGuiTexturePath("astralBarrierGui.png"));
 
-	public GuiSpellSealedDoor(InventoryPlayer inventoryplayer, TileEntitySpellSealedDoor door){
-		super(new ContainerSpellSealedDoor(inventoryplayer, door));
-		this.door = door;
-		xSize = 176;
-		ySize = 180;
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+        mc.renderEngine.bindTexture(background);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        int l = (width - xSize) / 2;
+        int i1 = (height - ySize) / 2;
+        drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
+    }
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2){
-	}
+    public GuiSpellSealedDoor(InventoryPlayer inventoryplayer, TileEntitySpellSealedDoor door) {
+        super(new ContainerSpellSealedDoor(inventoryplayer, door));
+        this.door = door;
+        xSize = 176;
+        ySize = 180;
+    }
 
-	private TileEntitySpellSealedDoor door;
+    @Override
+    protected void drawGuiContainerForegroundLayer(int par1, int par2) {}
+
+    private TileEntitySpellSealedDoor door;
 }

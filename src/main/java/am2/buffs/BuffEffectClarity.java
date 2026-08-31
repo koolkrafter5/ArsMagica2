@@ -2,23 +2,21 @@ package am2.buffs;
 
 import net.minecraft.entity.EntityLivingBase;
 
-public class BuffEffectClarity extends BuffEffect{
+public class BuffEffectClarity extends BuffEffect {
 
-	public BuffEffectClarity(int duration, int amplifier){
-		super(BuffList.clarity.id, duration, amplifier);
-	}
+    public BuffEffectClarity(int duration, int amplifier) {
+        super(BuffList.clarity.id, duration, amplifier);
+    }
 
-	@Override
-	public void applyEffect(EntityLivingBase entityliving){
-	}
+    @Override
+    public void applyEffect(EntityLivingBase entityliving) {}
 
-	@Override
-	public void stopEffect(EntityLivingBase entityliving){
-	}
+    @Override
+    public void stopEffect(EntityLivingBase entityliving) {}
 
-	@Override
-	protected String spellBuffName(){
-		return "Clarity";
-	}
+    @Override
+    protected String spellBuffName() {
+        return "Clarity";
+    }
 
 }

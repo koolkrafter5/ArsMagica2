@@ -1,32 +1,29 @@
 package am2.items;
 
-import am2.texture.ResourceManager;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Blocks;
 
-public class ItemFocusCharge extends ItemFocus{
+import am2.texture.ResourceManager;
 
-	public ItemFocusCharge(){
-		super();
-	}
+public class ItemFocusCharge extends ItemFocus {
 
-	@Override
-	public Object[] getRecipeItems(){
-		return new Object[]{
-				"CFC",
-				'F', ItemsCommonProxy.standardFocus,
-				'C', Blocks.glass
-		};
-	}
+    public ItemFocusCharge() {
+        super();
+    }
 
-	@Override
-	public String getInGameName(){
-		return "Charge Focus";
-	}
+    @Override
+    public Object[] getRecipeItems() {
+        return new Object[] { "CFC", 'F', ItemsCommonProxy.standardFocus, 'C', Blocks.glass };
+    }
 
-	@Override
-	public void registerIcons(IIconRegister par1IconRegister){
-		this.itemIcon = ResourceManager.RegisterTexture("focus_machinery_charge", par1IconRegister);
-	}
+    @Override
+    public String getInGameName() {
+        return "Charge Focus";
+    }
+
+    @Override
+    public void registerIcons(IIconRegister par1IconRegister) {
+        this.itemIcon = ResourceManager.RegisterTexture("focus_machinery_charge", par1IconRegister);
+    }
 
 }

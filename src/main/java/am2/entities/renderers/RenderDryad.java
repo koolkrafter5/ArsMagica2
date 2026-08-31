@@ -1,32 +1,35 @@
 package am2.entities.renderers;
 
-import am2.entities.EntityDryad;
-import am2.texture.ResourceManager;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderDryad extends RenderBiped{
+import am2.entities.EntityDryad;
+import am2.texture.ResourceManager;
 
-	private static final ResourceLocation rLoc = new ResourceLocation("arsmagica2", ResourceManager.getMobTexturePath("mobDryad.png"));
+public class RenderDryad extends RenderBiped {
 
-	public RenderDryad(){
-		super(new ModelBiped(), 0.5f);
-	}
+    private static final ResourceLocation rLoc = new ResourceLocation(
+        "arsmagica2",
+        ResourceManager.getMobTexturePath("mobDryad.png"));
 
-	@Override
-	public void doRender(Entity par1Entity, double par2, double par4, double par6, float par8, float par9){
-		this.func_82426_a((EntityDryad)par1Entity, par2, par4, par6, par8, par9);
-	}
+    public RenderDryad() {
+        super(new ModelBiped(), 0.5f);
+    }
 
-	@Override
-	protected ResourceLocation getEntityTexture(Entity par1Entity){
-		return rLoc;
-	}
+    @Override
+    public void doRender(Entity par1Entity, double par2, double par4, double par6, float par8, float par9) {
+        this.func_82426_a((EntityDryad) par1Entity, par2, par4, par6, par8, par9);
+    }
 
-	public void func_82426_a(EntityDryad dryad, double par2, double par4, double par6, float par8, float par9){
-		super.doRender(dryad, par2, par4, par6, par8, par9);
-	}
+    @Override
+    protected ResourceLocation getEntityTexture(Entity par1Entity) {
+        return rLoc;
+    }
+
+    public void func_82426_a(EntityDryad dryad, double par2, double par4, double par6, float par8, float par9) {
+        super.doRender(dryad, par2, par4, par6, par8, par9);
+    }
 
 }

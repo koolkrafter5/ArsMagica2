@@ -1,5 +1,23 @@
 package am2.spell.components;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockMushroom;
+import net.minecraft.block.IGrowable;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.BonemealEvent;
+
 import am2.AMCore;
 import am2.api.ArsMagicaApi;
 import am2.api.spell.component.interfaces.ISpellComponent;
@@ -13,177 +31,181 @@ import am2.particles.ParticleFloatUpward;
 import am2.particles.ParticleOrbitPoint;
 import am2.utility.DummyEntityPlayer;
 import cpw.mods.fml.common.eventhandler.Event.Result;
-import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.BonemealEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Random;
+public class Grow implements ISpellComponent {
 
+    private final static ArrayList<AMFlower> growableAMflowers = new ArrayList<AMFlower>(
+        Arrays.asList(
+            BlocksCommonProxy.cerublossom,
+            BlocksCommonProxy.desertNova,
+            BlocksCommonProxy.wakebloom,
+            BlocksCommonProxy.aum,
+            BlocksCommonProxy.tarmaRoot));
 
-public class Grow implements ISpellComponent{
+    @Override
+    public boolean applyEffectBlock(ItemStack stack, World world, int blockx, int blocky, int blockz, int blockFace,
+        double impactX, double impactY, double impactZ, EntityLivingBase caster) {
 
-	private final static ArrayList<AMFlower> growableAMflowers = new ArrayList<AMFlower>(Arrays.asList(
-			BlocksCommonProxy.cerublossom, BlocksCommonProxy.desertNova, BlocksCommonProxy.wakebloom, BlocksCommonProxy.aum, BlocksCommonProxy.tarmaRoot));
+        Block block = world.getBlock(blockx, blocky, blockz);
 
-	@Override
-	public boolean applyEffectBlock(ItemStack stack, World world, int blockx, int blocky, int blockz, int blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster){
+        BonemealEvent event = new BonemealEvent(
+            DummyEntityPlayer.fromEntityLiving(caster),
+            world,
+            block,
+            blockx,
+            blocky,
+            blockz);
+        if (MinecraftForge.EVENT_BUS.post(event)) {
+            return false;
+        }
+        if (event.getResult() == Result.ALLOW) {
+            return true;
+        }
 
-		Block block = world.getBlock(blockx, blocky, blockz);
+        // EoD: Spawn AM2 flowers with 3% chance. This has to be the first one in the list to override all others
+        if (world.rand.nextInt(100) < 3 && block.isNormalCube()
+            && (world.getBlock(blockx, blocky + 1, blockz)
+                .isAir(null, 0, 0, 0) || world.getBlock(blockx, blocky + 1, blockz) == Blocks.tallgrass)) {
+            // shuffle the flower list every time we want to try to find one.
+            Collections.shuffle(growableAMflowers);
 
-		BonemealEvent event = new BonemealEvent(DummyEntityPlayer.fromEntityLiving(caster), world, block, blockx, blocky, blockz);
-		if (MinecraftForge.EVENT_BUS.post(event)){
-			return false;
-		}
-		if (event.getResult() == Result.ALLOW){
-			return true;
-		}
+            for (AMFlower flower : growableAMflowers) {
+                if (flower.canGrowOn(world, blockx, blocky + 1, blockz)) {
+                    if (!world.isRemote) {
+                        world.setBlock(blockx, blocky + 1, blockz, flower, 0, 2);
+                    }
+                    return true;
+                }
+            }
+            // We did not find a flower or we have been executed on the wrong block. Either way, we continue
+        }
 
-		//EoD: Spawn AM2 flowers with 3% chance. This has to be the first one in the list to override all others
-		if (world.rand.nextInt(100) < 3 && block.isNormalCube() &&
-				(world.getBlock(blockx, blocky + 1, blockz).isAir(null, 0, 0, 0) || world.getBlock(blockx, blocky + 1, blockz) == Blocks.tallgrass)){
-			// shuffle the flower list every time we want to try to find one.
-			Collections.shuffle(growableAMflowers);
+        // Grow huge mushrooms 10% of the time.
+        if (block instanceof BlockMushroom) {
+            if (!world.isRemote && world.rand.nextInt(10) < 1) {
+                ((BlockMushroom) block).func_149884_c(world, blockx, blocky, blockz, world.rand);
+            }
 
-			for (AMFlower flower : growableAMflowers){
-				if (flower.canGrowOn(world, blockx, blocky + 1, blockz)){
-					if (!world.isRemote){
-						world.setBlock(blockx, blocky + 1, blockz, flower, 0, 2);
-					}
-					return true;
-				}
-			}
-			// We did not find a flower or we have been executed on the wrong block. Either way, we continue
-		}
+            return true;
+        }
 
-		//Grow huge mushrooms 10% of the time.
-		if (block instanceof BlockMushroom){
-			if (!world.isRemote && world.rand.nextInt(10) < 1){
-				((BlockMushroom)block).func_149884_c(world, blockx, blocky, blockz, world.rand);
-			}
+        // If the spell is executed in water, check if we have space for a wakebloom above and create one 3% of the
+        // time.
+        if (block == Blocks.water) {
+            if (world.getBlock(blockx, blocky + 1, blockz) == Blocks.air) {
+                if (!world.isRemote && world.rand.nextInt(100) < 3) {
+                    world.setBlock(blockx, blocky + 1, blockz, BlocksCommonProxy.wakebloom);
+                }
+                return true;
+            }
+        }
 
-			return true;
-		}
+        // EoD: If there is already tallgrass present, let's grow it further 20% of the time.
+        if (block == Blocks.tallgrass) {
+            if (Blocks.tallgrass.canBlockStay(world, blockx, blocky + 1, blockz)) {
+                if (!world.isRemote && world.rand.nextInt(10) < 2) {
+                    world.setBlock(blockx, blocky, blockz, Blocks.tallgrass, 1, 2);
+                }
+                return true;
+            }
+        }
 
+        // EoD: If there is already deadbush present, let's revitalize it 20% of the time.
+        // This works only on podzol in vanilla MC.
+        if (block == Blocks.deadbush) {
+            if (Blocks.tallgrass.canBlockStay(world, blockx, blocky, blockz)) {
+                if (!world.isRemote && world.rand.nextInt(10) < 2) {
+                    world.setBlock(blockx, blocky, blockz, Blocks.tallgrass, 1, 2);
+                }
+                return true;
+            }
+        }
 
-		//If the spell is executed in water, check if we have space for a wakebloom above and create one 3% of the time.
-		if (block == Blocks.water){
-			if (world.getBlock(blockx, blocky + 1, blockz) == Blocks.air){
-				if (!world.isRemote && world.rand.nextInt(100) < 3){
-					world.setBlock(blockx, blocky + 1, blockz, BlocksCommonProxy.wakebloom);
-				}
-				return true;
-			}
-		}
+        // EoD: Apply vanilla bonemeal effect to growables 30% of the time. This is the generic grow section.
+        // See ItemDye.applyBonemeal().
+        if (block instanceof IGrowable) {
+            IGrowable igrowable = (IGrowable) block;
+            // AMCore.log.getLogger().info("Grow component found IGrowable");
 
-		//EoD: If there is already tallgrass present, let's grow it further 20% of the time.
-		if (block == Blocks.tallgrass){
-			if (Blocks.tallgrass.canBlockStay(world, blockx, blocky + 1, blockz)){
-				if (!world.isRemote && world.rand.nextInt(10) < 2){
-					world.setBlock(blockx, blocky, blockz, Blocks.tallgrass, 1, 2);
-				}
-				return true;
-			}
-		}
+            if (igrowable.func_149851_a(world, blockx, blocky, blockz, world.isRemote)) {
+                if (!world.isRemote && world.rand.nextInt(10) < 3) {
+                    if (igrowable.func_149852_a(world, world.rand, blockx, blocky, blockz)) {
+                        igrowable.func_149853_b(world, world.rand, blockx, blocky, blockz);
+                    }
+                }
+                return true;
+            }
+        }
 
-		//EoD: If there is already deadbush present, let's revitalize it 20% of the time.
-		//     This works only on podzol in vanilla MC.
-		if (block == Blocks.deadbush){
-			if (Blocks.tallgrass.canBlockStay(world, blockx, blocky, blockz)){
-				if (!world.isRemote && world.rand.nextInt(10) < 2){
-					world.setBlock(blockx, blocky, blockz, Blocks.tallgrass, 1, 2);
-				}
-				return true;
-			}
-		}
+        return true;
+    }
 
-		// EoD: Apply vanilla bonemeal effect to growables 30% of the time. This is the generic grow section.
-		//      See ItemDye.applyBonemeal().
-		if (block instanceof IGrowable){
-			IGrowable igrowable = (IGrowable)block;
-			//AMCore.log.getLogger().info("Grow component found IGrowable");
+    @Override
+    public boolean applyEffectEntity(ItemStack stack, World world, EntityLivingBase caster, Entity target) {
+        return false;
+    }
 
-			if (igrowable.func_149851_a(world, blockx, blocky, blockz, world.isRemote)){
-				if (!world.isRemote && world.rand.nextInt(10) < 3){
-					if (igrowable.func_149852_a(world, world.rand, blockx, blocky, blockz)){
-						igrowable.func_149853_b(world, world.rand, blockx, blocky, blockz);
-					}
-				}
-				return true;
-			}
-		}
+    @Override
+    public float manaCost(EntityLivingBase caster) {
+        return 17.4f;
+    }
 
-		return true;
-	}
+    @Override
+    public float burnout(EntityLivingBase caster) {
+        return ArsMagicaApi.getBurnoutFromMana(manaCost(caster));
+    }
 
-	@Override
-	public boolean applyEffectEntity(ItemStack stack, World world, EntityLivingBase caster, Entity target){
-		return false;
-	}
+    @Override
+    public ItemStack[] reagents(EntityLivingBase caster) {
+        return null;
+    }
 
-	@Override
-	public float manaCost(EntityLivingBase caster){
-		return 17.4f;
-	}
+    @Override
+    public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target,
+        Random rand, int colorModifier) {
+        for (int i = 0; i < 25; ++i) {
+            AMParticle particle = (AMParticle) AMCore.proxy.particleManager
+                .spawn(world, "plant", x + 0.5, y + 1, z + 0.5);
+            if (particle != null) {
+                particle.addRandomOffset(1, 1, 1);
+                particle.AddParticleController(new ParticleFloatUpward(particle, 0, 0.1f, 1, false));
+                particle.AddParticleController(
+                    new ParticleOrbitPoint(particle, x + 0.5, y + 0.5, z + 0.5, 2, false).setIgnoreYCoordinate(true)
+                        .SetOrbitSpeed(0.1f)
+                        .SetTargetDistance(0.3f + rand.nextDouble() * 0.3));
+                particle.AddParticleController(
+                    new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.05f)
+                        .setKillParticleOnFinish(true));
+                particle.setMaxAge(20);
+                particle.setParticleScale(0.1f);
+                if (colorModifier > -1) {
+                    particle.setRGBColorF(
+                        ((colorModifier >> 16) & 0xFF) / 255.0f,
+                        ((colorModifier >> 8) & 0xFF) / 255.0f,
+                        (colorModifier & 0xFF) / 255.0f);
+                }
+            }
+        }
+    }
 
-	@Override
-	public float burnout(EntityLivingBase caster){
-		return ArsMagicaApi.getBurnoutFromMana(manaCost(caster));
-	}
+    @Override
+    public EnumSet<Affinity> getAffinity() {
+        return EnumSet.of(Affinity.NATURE);
+    }
 
-	@Override
-	public ItemStack[] reagents(EntityLivingBase caster){
-		return null;
-	}
+    @Override
+    public int getID() {
+        return 22;
+    }
 
-	@Override
-	public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier){
-		for (int i = 0; i < 25; ++i){
-			AMParticle particle = (AMParticle)AMCore.proxy.particleManager.spawn(world, "plant", x + 0.5, y + 1, z + 0.5);
-			if (particle != null){
-				particle.addRandomOffset(1, 1, 1);
-				particle.AddParticleController(new ParticleFloatUpward(particle, 0, 0.1f, 1, false));
-				particle.AddParticleController(new ParticleOrbitPoint(particle, x + 0.5, y + 0.5, z + 0.5, 2, false).setIgnoreYCoordinate(true).SetOrbitSpeed(0.1f).SetTargetDistance(0.3f + rand.nextDouble() * 0.3));
-				particle.AddParticleController(new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.05f).setKillParticleOnFinish(true));
-				particle.setMaxAge(20);
-				particle.setParticleScale(0.1f);
-				if (colorModifier > -1){
-					particle.setRGBColorF(((colorModifier >> 16) & 0xFF) / 255.0f, ((colorModifier >> 8) & 0xFF) / 255.0f, (colorModifier & 0xFF) / 255.0f);
-				}
-			}
-		}
-	}
+    @Override
+    public Object[] getRecipeItems() {
+        return new Object[] { new ItemStack(ItemsCommonProxy.rune, 1, ItemsCommonProxy.rune.META_GREEN),
+            new ItemStack(Items.dye, 1, 15), BlocksCommonProxy.witchwoodLog };
+    }
 
-	@Override
-	public EnumSet<Affinity> getAffinity(){
-		return EnumSet.of(Affinity.NATURE);
-	}
-
-	@Override
-	public int getID(){
-		return 22;
-	}
-
-	@Override
-	public Object[] getRecipeItems(){
-		return new Object[]{
-				new ItemStack(ItemsCommonProxy.rune, 1, ItemsCommonProxy.rune.META_GREEN),
-				new ItemStack(Items.dye, 1, 15),
-				BlocksCommonProxy.witchwoodLog
-		};
-	}
-
-	@Override
-	public float getAffinityShift(Affinity affinity){
-		return 0.02f;
-	}
+    @Override
+    public float getAffinityShift(Affinity affinity) {
+        return 0.02f;
+    }
 }

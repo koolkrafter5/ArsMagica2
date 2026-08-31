@@ -2,21 +2,20 @@ package am2.buffs;
 
 import net.minecraft.entity.EntityLivingBase;
 
-public class BuffEffectBurnoutReduction extends BuffEffect{
-	public BuffEffectBurnoutReduction(int duration, int amplifier){
-		super(BuffList.burnoutReduction.id, duration, amplifier);
-	}
+public class BuffEffectBurnoutReduction extends BuffEffect {
 
-	@Override
-	public void applyEffect(EntityLivingBase entityliving){
-	}
+    public BuffEffectBurnoutReduction(int duration, int amplifier) {
+        super(BuffList.burnoutReduction.id, duration, amplifier);
+    }
 
-	@Override
-	public void stopEffect(EntityLivingBase entityliving){
-	}
+    @Override
+    public void applyEffect(EntityLivingBase entityliving) {}
 
-	@Override
-	protected String spellBuffName(){
-		return "Burnout Reduction";
-	}
+    @Override
+    public void stopEffect(EntityLivingBase entityliving) {}
+
+    @Override
+    protected String spellBuffName() {
+        return "Burnout Reduction";
+    }
 }

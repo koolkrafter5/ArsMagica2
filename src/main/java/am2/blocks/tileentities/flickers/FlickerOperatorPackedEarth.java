@@ -1,10 +1,5 @@
 package am2.blocks.tileentities.flickers;
 
-import am2.api.flickers.IFlickerController;
-import am2.api.flickers.IFlickerFunctionality;
-import am2.api.spell.enums.Affinity;
-import am2.items.ItemsCommonProxy;
-import am2.utility.InventoryUtilities;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -12,88 +7,97 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class FlickerOperatorPackedEarth implements IFlickerFunctionality{
+import am2.api.flickers.IFlickerController;
+import am2.api.flickers.IFlickerFunctionality;
+import am2.api.spell.enums.Affinity;
+import am2.items.ItemsCommonProxy;
+import am2.utility.InventoryUtilities;
 
-	@Override
-	public boolean RequiresPower(){
-		return false;
-	}
+public class FlickerOperatorPackedEarth implements IFlickerFunctionality {
 
-	@Override
-	public int PowerPerOperation(){
-		return 10;
-	}
+    @Override
+    public boolean RequiresPower() {
+        return false;
+    }
 
-	@Override
-	public boolean DoOperation(World worldObj, IFlickerController habitat, boolean powered){
-		int searchesPerLoop = 12;
+    @Override
+    public int PowerPerOperation() {
+        return 10;
+    }
 
-		int radius = 6;
-		int diameter = radius * 2 + 1;
+    @Override
+    public boolean DoOperation(World worldObj, IFlickerController habitat, boolean powered) {
+        int searchesPerLoop = 12;
 
-		if (!worldObj.isRemote){
+        int radius = 6;
+        int diameter = radius * 2 + 1;
 
-			boolean actionPerformed = false;
-			for (int i = 0; i < searchesPerLoop && !actionPerformed; ++i){
-				TileEntity te = worldObj.getTileEntity(((TileEntity)habitat).xCoord, ((TileEntity)habitat).yCoord - 1, ((TileEntity)habitat).zCoord);
-				if (te == null || !(te instanceof IInventory)){
-					return false;
-				}
+        if (!worldObj.isRemote) {
 
-				int effectX = ((TileEntity)habitat).xCoord - radius + (worldObj.rand.nextInt(diameter));
-				int effectZ = ((TileEntity)habitat).zCoord - radius + (worldObj.rand.nextInt(diameter));
-				int effectY = ((TileEntity)habitat).yCoord - 1 - worldObj.rand.nextInt(radius);
+            boolean actionPerformed = false;
+            for (int i = 0; i < searchesPerLoop && !actionPerformed; ++i) {
+                TileEntity te = worldObj.getTileEntity(
+                    ((TileEntity) habitat).xCoord,
+                    ((TileEntity) habitat).yCoord - 1,
+                    ((TileEntity) habitat).zCoord);
+                if (te == null || !(te instanceof IInventory)) {
+                    return false;
+                }
 
-				if (effectY < 3)
-					effectY = 3;
+                int effectX = ((TileEntity) habitat).xCoord - radius + (worldObj.rand.nextInt(diameter));
+                int effectZ = ((TileEntity) habitat).zCoord - radius + (worldObj.rand.nextInt(diameter));
+                int effectY = ((TileEntity) habitat).yCoord - 1 - worldObj.rand.nextInt(radius);
 
-				Block block = worldObj.getBlock(effectX, effectY, effectZ);
+                if (effectY < 3) effectY = 3;
 
-				if (worldObj.isAirBlock(effectX, effectY, effectZ) || block.isReplaceable(worldObj, effectX, effectY, effectZ)){
-					int inventoryIndex = InventoryUtilities.getFirstBlockInInventory((IInventory)te);
-					if (inventoryIndex > -1){
-						ItemStack stack = ((IInventory)te).getStackInSlot(inventoryIndex);
-						InventoryUtilities.decrementStackQuantity((IInventory)te, inventoryIndex, 1);
-						worldObj.setBlock(effectX, effectY, effectZ, Block.getBlockFromItem(stack.getItem()), stack.getItemDamage(), 2);
-						actionPerformed = true;
-					}
-				}
-			}
-		}
+                Block block = worldObj.getBlock(effectX, effectY, effectZ);
 
-		return true;
-	}
+                if (worldObj.isAirBlock(effectX, effectY, effectZ)
+                    || block.isReplaceable(worldObj, effectX, effectY, effectZ)) {
+                    int inventoryIndex = InventoryUtilities.getFirstBlockInInventory((IInventory) te);
+                    if (inventoryIndex > -1) {
+                        ItemStack stack = ((IInventory) te).getStackInSlot(inventoryIndex);
+                        InventoryUtilities.decrementStackQuantity((IInventory) te, inventoryIndex, 1);
+                        worldObj.setBlock(
+                            effectX,
+                            effectY,
+                            effectZ,
+                            Block.getBlockFromItem(stack.getItem()),
+                            stack.getItemDamage(),
+                            2);
+                        actionPerformed = true;
+                    }
+                }
+            }
+        }
 
-	@Override
-	public boolean DoOperation(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers){
-		return DoOperation(worldObj, controller, powered);
-	}
+        return true;
+    }
 
-	@Override
-	public void RemoveOperator(World worldObj, IFlickerController controller, boolean powered){
-	}
+    @Override
+    public boolean DoOperation(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers) {
+        return DoOperation(worldObj, controller, powered);
+    }
 
-	@Override
-	public int TimeBetweenOperation(boolean powered, Affinity[] flickers){
-		return powered ? 1 : 20;
-	}
+    @Override
+    public void RemoveOperator(World worldObj, IFlickerController controller, boolean powered) {}
 
-	@Override
-	public void RemoveOperator(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers){
-	}
+    @Override
+    public int TimeBetweenOperation(boolean powered, Affinity[] flickers) {
+        return powered ? 1 : 20;
+    }
 
-	@Override
-	public Object[] getRecipe(){
-		return new Object[]{
-				"DDD",
-				"RFR",
-				" E ",
-				Character.valueOf('D'), Blocks.dirt,
-				Character.valueOf('R'), new ItemStack(ItemsCommonProxy.rune, 1, ItemsCommonProxy.rune.META_BLACK),
-				Character.valueOf('E'), new ItemStack(ItemsCommonProxy.essence, 1, ItemsCommonProxy.essence.META_EARTH),
-				Character.valueOf('F'), new ItemStack(ItemsCommonProxy.flickerJar, 1, Affinity.EARTH.ordinal())
+    @Override
+    public void RemoveOperator(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers) {}
 
-		};
-	}
+    @Override
+    public Object[] getRecipe() {
+        return new Object[] { "DDD", "RFR", " E ", Character.valueOf('D'), Blocks.dirt, Character.valueOf('R'),
+            new ItemStack(ItemsCommonProxy.rune, 1, ItemsCommonProxy.rune.META_BLACK), Character.valueOf('E'),
+            new ItemStack(ItemsCommonProxy.essence, 1, ItemsCommonProxy.essence.META_EARTH), Character.valueOf('F'),
+            new ItemStack(ItemsCommonProxy.flickerJar, 1, Affinity.EARTH.ordinal())
+
+        };
+    }
 
 }

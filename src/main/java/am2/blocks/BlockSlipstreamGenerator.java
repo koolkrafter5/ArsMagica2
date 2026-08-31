@@ -1,37 +1,38 @@
 package am2.blocks;
 
-import am2.blocks.tileentities.TileEntitySlipstreamGenerator;
-import am2.texture.ResourceManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockSlipstreamGenerator extends PoweredBlock{
+import am2.blocks.tileentities.TileEntitySlipstreamGenerator;
+import am2.texture.ResourceManager;
 
-	public BlockSlipstreamGenerator(){
-		super(Material.wood);
-		this.setStepSound(Block.soundTypeGlass);
-	}
+public class BlockSlipstreamGenerator extends PoweredBlock {
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int i){
-		return new TileEntitySlipstreamGenerator();
-	}
+    public BlockSlipstreamGenerator() {
+        super(Material.wood);
+        this.setStepSound(Block.soundTypeGlass);
+    }
 
-	@Override
-	public void registerBlockIcons(IIconRegister par1IconRegister){
-		this.blockIcon = ResourceManager.RegisterTexture("slipstreamGenerator", par1IconRegister);
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return new TileEntitySlipstreamGenerator();
+    }
 
-	@Override
-	public int getRenderBlockPass(){
-		return 1;
-	}
+    @Override
+    public void registerBlockIcons(IIconRegister par1IconRegister) {
+        this.blockIcon = ResourceManager.RegisterTexture("slipstreamGenerator", par1IconRegister);
+    }
 
-	@Override
-	public boolean isOpaqueCube(){
-		return false;
-	}
+    @Override
+    public int getRenderBlockPass() {
+        return 1;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 }

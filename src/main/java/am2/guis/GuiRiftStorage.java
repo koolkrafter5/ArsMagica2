@@ -1,66 +1,72 @@
 package am2.guis;
 
-import am2.containers.ContainerRiftStorage;
-import am2.playerextensions.RiftStorage;
-import am2.texture.ResourceManager;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
-public class GuiRiftStorage extends GuiContainer{
+import am2.containers.ContainerRiftStorage;
+import am2.playerextensions.RiftStorage;
+import am2.texture.ResourceManager;
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", ResourceManager.GetGuiTexturePath("riftGUI.png"));
-	private static final ResourceLocation extras = new ResourceLocation("arsmagica2", ResourceManager.GetGuiTexturePath("spellBookGui_2.png"));
+public class GuiRiftStorage extends GuiContainer {
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int i, int j){
-		mc.renderEngine.bindTexture(background);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		int l = (width - xSize) / 2;
-		int i1 = (height - ySize) / 2;
-		drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
-	}
+    private static final ResourceLocation background = new ResourceLocation(
+        "arsmagica2",
+        ResourceManager.GetGuiTexturePath("riftGUI.png"));
+    private static final ResourceLocation extras = new ResourceLocation(
+        "arsmagica2",
+        ResourceManager.GetGuiTexturePath("spellBookGui_2.png"));
 
-	public GuiRiftStorage(InventoryPlayer inventoryplayer, RiftStorage storage){
-		super(new ContainerRiftStorage(inventoryplayer, storage));
-		this.storage = storage;
-		xSize = 176;
-		ySize = 212;
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+        mc.renderEngine.bindTexture(background);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        int l = (width - xSize) / 2;
+        int i1 = (height - ySize) / 2;
+        drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
+    }
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2){
+    public GuiRiftStorage(InventoryPlayer inventoryplayer, RiftStorage storage) {
+        super(new ContainerRiftStorage(inventoryplayer, storage));
+        this.storage = storage;
+        xSize = 176;
+        ySize = 212;
+    }
 
-		mc.renderEngine.bindTexture(extras);
+    @Override
+    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 
-		int rows = 1;
+        mc.renderEngine.bindTexture(extras);
 
-		switch (storage.getAccessLevel()){
-		case 1:
-			rows = 1;
-			break;
-		case 2:
-			rows = 3;
-			break;
-		case 3:
-			rows = 6;
-			break;
-		}
+        int rows = 1;
 
-		for (int j = rows; j < 6; ++j){
-			for (int i = 0; i < 9; ++i){
-				int index = i + j * 9;
-				int x = 8 + (18 * i);
-				int y = 13 + (j * 18);
-				GL11.glEnable(GL11.GL_BLEND);
-				GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-				drawTexturedModalRect(x, y, 0, 20, 16, 16);
-				GL11.glDisable(GL11.GL_BLEND);
-			}
-		}
-	}
+        switch (storage.getAccessLevel()) {
+            case 1:
+                rows = 1;
+                break;
+            case 2:
+                rows = 3;
+                break;
+            case 3:
+                rows = 6;
+                break;
+        }
 
-	private final RiftStorage storage;
+        for (int j = rows; j < 6; ++j) {
+            for (int i = 0; i < 9; ++i) {
+                int index = i + j * 9;
+                int x = 8 + (18 * i);
+                int y = 13 + (j * 18);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+                drawTexturedModalRect(x, y, 0, 20, 16, 16);
+                GL11.glDisable(GL11.GL_BLEND);
+            }
+        }
+    }
+
+    private final RiftStorage storage;
 }

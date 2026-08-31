@@ -1,74 +1,94 @@
 package am2.entities;
 
-import am2.AMCore;
-import am2.entities.ai.EntityAIRangedAttackSpell;
-import am2.items.ItemsCommonProxy;
-import am2.playerextensions.ExtendedProperties;
-import am2.utility.NPCSpells;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAIFollowGolem;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAILookAtTradePlayer;
+import net.minecraft.entity.ai.EntityAIMoveIndoors;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAIOpenDoor;
+import net.minecraft.entity.ai.EntityAIRestrictOpenDoor;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAITradePlayer;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class EntityMageVillager extends EntityVillager{
+import am2.AMCore;
+import am2.entities.ai.EntityAIRangedAttackSpell;
+import am2.items.ItemsCommonProxy;
+import am2.playerextensions.ExtendedProperties;
+import am2.utility.NPCSpells;
 
-	private float actionSpeed;
+public class EntityMageVillager extends EntityVillager {
 
-	private static final ItemStack heldItem = new ItemStack(ItemsCommonProxy.spellBook);
+    private float actionSpeed;
 
-	public EntityMageVillager(World par1World){
-		super(par1World);
-		ExtendedProperties.For(this).setMagicLevelWithMana(37);
+    private static final ItemStack heldItem = new ItemStack(ItemsCommonProxy.spellBook);
 
-		initAI();
-	}
+    public EntityMageVillager(World par1World) {
+        super(par1World);
+        ExtendedProperties.For(this)
+            .setMagicLevelWithMana(37);
 
-	public String getTexture(){
-		return "/assets/ArsMagica/textures/mobs/light_mages/wizard_villager3.png";
-	}
+        initAI();
+    }
 
-	@Override
-	public int getProfession(){
-		return AMCore.config.getVillagerProfessionID();
-	}
+    public String getTexture() {
+        return "/assets/ArsMagica/textures/mobs/light_mages/wizard_villager3.png";
+    }
 
-	private void initAI(){
-		this.tasks.taskEntries.clear();
-		this.setAIMoveSpeed(0.5F);
-		this.actionSpeed = 0.7f;
-		this.getNavigator().setBreakDoors(true);
-		this.getNavigator().setAvoidsWater(true);
-		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(1, new EntityAITradePlayer(this));
-		this.tasks.addTask(1, new EntityAILookAtTradePlayer(this));
+    @Override
+    public int getProfession() {
+        return AMCore.config.getVillagerProfessionID();
+    }
 
-		this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 60, NPCSpells.instance.darkMage_DiminishedAttack));
-		this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 140, NPCSpells.instance.healSelf));
-		this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 40, NPCSpells.instance.fireBolt));
-		this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 100, NPCSpells.instance.arcaneBolt));
-		this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 120, NPCSpells.instance.lightMage_NormalAttack));
+    private void initAI() {
+        this.tasks.taskEntries.clear();
+        this.setAIMoveSpeed(0.5F);
+        this.actionSpeed = 0.7f;
+        this.getNavigator()
+            .setBreakDoors(true);
+        this.getNavigator()
+            .setAvoidsWater(true);
+        this.tasks.addTask(0, new EntityAISwimming(this));
+        this.tasks.addTask(1, new EntityAITradePlayer(this));
+        this.tasks.addTask(1, new EntityAILookAtTradePlayer(this));
 
-		this.tasks.addTask(2, new EntityAIMoveIndoors(this));
-		this.tasks.addTask(3, new EntityAIRestrictOpenDoor(this));
-		this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
-		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.3F));
-		this.tasks.addTask(7, new EntityAIFollowGolem(this));
-		this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
-		this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityVillager.class, 5.0F, 0.02F));
-		this.tasks.addTask(9, new EntityAIWander(this, 0.3F));
-		this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
+        this.tasks.addTask(
+            4,
+            new EntityAIRangedAttackSpell(this, actionSpeed, 60, NPCSpells.instance.darkMage_DiminishedAttack));
+        this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 140, NPCSpells.instance.healSelf));
+        this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 40, NPCSpells.instance.fireBolt));
+        this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, actionSpeed, 100, NPCSpells.instance.arcaneBolt));
+        this.tasks.addTask(
+            4,
+            new EntityAIRangedAttackSpell(this, actionSpeed, 120, NPCSpells.instance.lightMage_NormalAttack));
 
-		this.targetTasks.taskEntries.clear();
+        this.tasks.addTask(2, new EntityAIMoveIndoors(this));
+        this.tasks.addTask(3, new EntityAIRestrictOpenDoor(this));
+        this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
+        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.3F));
+        this.tasks.addTask(7, new EntityAIFollowGolem(this));
+        this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityVillager.class, 5.0F, 0.02F));
+        this.tasks.addTask(9, new EntityAIWander(this, 0.3F));
+        this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
 
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityMob.class, 5, false));
-	}
+        this.targetTasks.taskEntries.clear();
 
-	@Override
-	public ItemStack getHeldItem(){
-		return null;
-	}
+        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityMob.class, 5, false));
+    }
+
+    @Override
+    public ItemStack getHeldItem() {
+        return null;
+    }
 }

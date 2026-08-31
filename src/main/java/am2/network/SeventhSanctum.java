@@ -1,81 +1,76 @@
 package am2.network;
 
-import am2.AMCore;
-import am2.utility.WebRequestUtils;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class SeventhSanctum{
-	private static final String webURL = "http://www.seventhsanctum.com/generate.php?Genname=spell";
-	private static final String formName = "frmControls";
+import am2.AMCore;
+import am2.utility.WebRequestUtils;
 
-	private boolean failed = false;
+public class SeventhSanctum {
 
-	private static final HashMap<String, String> postOptions = new HashMap<String, String>();
+    private static final String webURL = "http://www.seventhsanctum.com/generate.php?Genname=spell";
+    private static final String formName = "frmControls";
 
-	public static final SeventhSanctum instance = new SeventhSanctum();
+    private boolean failed = false;
 
-	private LinkedList<String> suggestions;
+    private static final HashMap<String, String> postOptions = new HashMap<String, String>();
 
-	private SeventhSanctum(){
-		suggestions = new LinkedList<String>();
-	}
+    public static final SeventhSanctum instance = new SeventhSanctum();
 
-	public void init(){
-		postOptions.clear();
-		postOptions.put("selGenCount", "25");
-		postOptions.put("selGenType", "SEEDALL");
+    private LinkedList<String> suggestions;
 
-		if (AMCore.config.suggestSpellNames())
-			getSuggestions();
-		else
-			failed = true;
-	}
+    private SeventhSanctum() {
+        suggestions = new LinkedList<String>();
+    }
 
-	public String getNextSuggestion(){
-		if (failed) return "";
+    public void init() {
+        postOptions.clear();
+        postOptions.put("selGenCount", "25");
+        postOptions.put("selGenType", "SEEDALL");
 
-		if (suggestions.size() <= 0)
-			getSuggestions();
+        if (AMCore.config.suggestSpellNames()) getSuggestions();
+        else failed = true;
+    }
 
-		if (suggestions.size() <= 0)
-			return "";
+    public String getNextSuggestion() {
+        if (failed) return "";
 
-		return suggestions.pop();
-	}
+        if (suggestions.size() <= 0) getSuggestions();
 
-	private void getSuggestions(){
-		try{
-			String s = WebRequestUtils.sendPost(webURL, postOptions);
-			//System.out.println(s);
-			int startIndex = s.lastIndexOf("SubSubContentTitle");
-			if (startIndex == -1) return;
-			startIndex = s.indexOf("<!--Title -->", startIndex) + 13;
-			int endIndex = s.indexOf("&nbsp;", startIndex);
-			if (endIndex == -1) return;
+        if (suggestions.size() <= 0) return "";
 
-			s = s.substring(startIndex, endIndex);
-			s = s.replace("\t", "");
-			String[] suggestions = s.split("<div class=\"GeneratorResult");
-			for (String suggestion : suggestions)
-				parseAndAddSuggestion(suggestion);
-		}catch (Throwable t){
-			t.printStackTrace();
-			failed = true;
-		}
-	}
+        return suggestions.pop();
+    }
 
-	private void parseAndAddSuggestion(String s){
-		if (!s.endsWith("</div>")) return;
+    private void getSuggestions() {
+        try {
+            String s = WebRequestUtils.sendPost(webURL, postOptions);
+            // System.out.println(s);
+            int startIndex = s.lastIndexOf("SubSubContentTitle");
+            if (startIndex == -1) return;
+            startIndex = s.indexOf("<!--Title -->", startIndex) + 13;
+            int endIndex = s.indexOf("&nbsp;", startIndex);
+            if (endIndex == -1) return;
 
-		int startIndex = s.indexOf(">");
-		if (startIndex == -1) return;
-		int endIndex = s.indexOf("<", startIndex);
-		if (endIndex == -1) return;
+            s = s.substring(startIndex, endIndex);
+            s = s.replace("\t", "");
+            String[] suggestions = s.split("<div class=\"GeneratorResult");
+            for (String suggestion : suggestions) parseAndAddSuggestion(suggestion);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            failed = true;
+        }
+    }
 
-		s = s.substring(startIndex + 1, endIndex);
-		if (s.length() <= 20)
-			suggestions.add(s);
-	}
+    private void parseAndAddSuggestion(String s) {
+        if (!s.endsWith("</div>")) return;
+
+        int startIndex = s.indexOf(">");
+        if (startIndex == -1) return;
+        int endIndex = s.indexOf("<", startIndex);
+        if (endIndex == -1) return;
+
+        s = s.substring(startIndex + 1, endIndex);
+        if (s.length() <= 20) suggestions.add(s);
+    }
 }

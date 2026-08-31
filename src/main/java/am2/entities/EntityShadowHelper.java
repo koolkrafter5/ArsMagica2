@@ -1,14 +1,5 @@
 package am2.entities;
 
-import am2.AMCore;
-import am2.api.math.AMVector3;
-import am2.blocks.tileentities.TileEntityCraftingAltar;
-import am2.entities.ai.EntityAISpellmaking;
-import am2.particles.AMParticle;
-import am2.particles.ParticleFloatUpward;
-import am2.proxy.ShadowSkinHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
@@ -19,181 +10,199 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class EntityShadowHelper extends EntityLiving{
+import am2.AMCore;
+import am2.api.math.AMVector3;
+import am2.blocks.tileentities.TileEntityCraftingAltar;
+import am2.entities.ai.EntityAISpellmaking;
+import am2.particles.AMParticle;
+import am2.particles.ParticleFloatUpward;
+import am2.proxy.ShadowSkinHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-	private static final int DW_MIMIC_USER = 21; //who are we going to mimic (MC skin)?	
-	private static final int DW_SEARCH_ITEM = 22; //what are we currently looking for?
-	private static final int DW_TRANS_LOC_X = 23; //x-coordinate of search
-	private static final int DW_TRANS_LOC_Y = 24; //y-coordinate of search
-	private static final int DW_TRANS_LOC_Z = 25; //z-coordinate of search
-	private static final int DW_HELD_ITEM = 26; //current held item
-	private static final int DW_DROP_LOC_X = 27; //x-coordinate of search
-	private static final int DW_DROP_LOC_Y = 28; //y-coordinate of search
-	private static final int DW_DROP_LOC_Z = 29; //z-coordinate of search
+public class EntityShadowHelper extends EntityLiving {
 
-	private TileEntityCraftingAltar altarTarget = null;
-	private String lastDWString = "";
+    private static final int DW_MIMIC_USER = 21; // who are we going to mimic (MC skin)?
+    private static final int DW_SEARCH_ITEM = 22; // what are we currently looking for?
+    private static final int DW_TRANS_LOC_X = 23; // x-coordinate of search
+    private static final int DW_TRANS_LOC_Y = 24; // y-coordinate of search
+    private static final int DW_TRANS_LOC_Z = 25; // z-coordinate of search
+    private static final int DW_HELD_ITEM = 26; // current held item
+    private static final int DW_DROP_LOC_X = 27; // x-coordinate of search
+    private static final int DW_DROP_LOC_Y = 28; // y-coordinate of search
+    private static final int DW_DROP_LOC_Z = 29; // z-coordinate of search
 
-	@SideOnly(Side.CLIENT)
-	private ShadowSkinHelper skinHelper;
+    private TileEntityCraftingAltar altarTarget = null;
+    private String lastDWString = "";
 
-	public EntityShadowHelper(World par1World){
-		super(par1World);
-		initAI();
-	}
+    @SideOnly(Side.CLIENT)
+    private ShadowSkinHelper skinHelper;
 
-	@Override
-	protected boolean isAIEnabled(){
-		return true;
-	}
+    public EntityShadowHelper(World par1World) {
+        super(par1World);
+        initAI();
+    }
 
-	@Override
-	public void onDeath(DamageSource par1DamageSource){
-		super.onDeath(par1DamageSource);
-		if (worldObj.isRemote){
-			spawnParticles();
-			worldObj.playSound(posX, posY, posZ, "arsmagica2:misc.craftingaltar.create_spell", 1.0f, 1.0f, true);
-		}
-	}
+    @Override
+    protected boolean isAIEnabled() {
+        return true;
+    }
 
-	private void spawnParticles(){
-		if (worldObj.isRemote){
-			for (int i = 0; i < 25 * AMCore.config.getGFXLevel() + 1; ++i){
-				AMParticle particle = (AMParticle)AMCore.proxy.particleManager.spawn(worldObj, "arcane", posX, posY, posZ);
-				if (particle != null){
-					particle.addRandomOffset(1, 1, 1);
-					particle.AddParticleController(new ParticleFloatUpward(particle, 0, 0.02f + getRNG().nextFloat() * 0.2f, 1, false));
-					particle.setIgnoreMaxAge(false);
-					particle.setMaxAge(20 + getRNG().nextInt(20));
-				}
-			}
-		}
-	}
+    @Override
+    public void onDeath(DamageSource par1DamageSource) {
+        super.onDeath(par1DamageSource);
+        if (worldObj.isRemote) {
+            spawnParticles();
+            worldObj.playSound(posX, posY, posZ, "arsmagica2:misc.craftingaltar.create_spell", 1.0f, 1.0f, true);
+        }
+    }
 
-	public void onJoinWorld(World world){
-		spawnParticles();
-		if (world.isRemote)
-			this.skinHelper = new ShadowSkinHelper();
-	}
+    private void spawnParticles() {
+        if (worldObj.isRemote) {
+            for (int i = 0; i < 25 * AMCore.config.getGFXLevel() + 1; ++i) {
+                AMParticle particle = (AMParticle) AMCore.proxy.particleManager
+                    .spawn(worldObj, "arcane", posX, posY, posZ);
+                if (particle != null) {
+                    particle.addRandomOffset(1, 1, 1);
+                    particle.AddParticleController(
+                        new ParticleFloatUpward(particle, 0, 0.02f + getRNG().nextFloat() * 0.2f, 1, false));
+                    particle.setIgnoreMaxAge(false);
+                    particle.setMaxAge(20 + getRNG().nextInt(20));
+                }
+            }
+        }
+    }
 
-	@Override
-	protected String getDeathSound(){
-		return null;
-	}
+    public void onJoinWorld(World world) {
+        spawnParticles();
+        if (world.isRemote) this.skinHelper = new ShadowSkinHelper();
+    }
 
-	@Override
-	protected boolean canDespawn(){
-		return false;
-	}
+    @Override
+    protected String getDeathSound() {
+        return null;
+    }
 
-	@Override
-	protected void onDeathUpdate(){
-		this.setDead();
-	}
+    @Override
+    protected boolean canDespawn() {
+        return false;
+    }
 
-	@Override
-	protected void entityInit(){
-		super.entityInit();
-		this.dataWatcher.addObject(DW_MIMIC_USER, "");
-		this.dataWatcher.addObject(DW_SEARCH_ITEM, new ItemStack(Items.apple));
-		this.dataWatcher.addObject(DW_TRANS_LOC_X, 0);
-		this.dataWatcher.addObject(DW_TRANS_LOC_Y, 0);
-		this.dataWatcher.addObject(DW_TRANS_LOC_Z, 0);
-		this.dataWatcher.addObject(DW_HELD_ITEM, new ItemStack(Items.paper));
-		this.dataWatcher.addObject(DW_DROP_LOC_X, 0);
-		this.dataWatcher.addObject(DW_DROP_LOC_Y, 0);
-		this.dataWatcher.addObject(DW_DROP_LOC_Z, 0);
-	}
+    @Override
+    protected void onDeathUpdate() {
+        this.setDead();
+    }
 
-	public void setSearchLocationAndItem(AMVector3 location, ItemStack item){
-		if (this.worldObj.isRemote) return;
-		this.dataWatcher.updateObject(DW_SEARCH_ITEM, item);
-		this.dataWatcher.updateObject(DW_TRANS_LOC_X, (int)location.x);
-		this.dataWatcher.updateObject(DW_TRANS_LOC_Y, (int)location.y);
-		this.dataWatcher.updateObject(DW_TRANS_LOC_Z, (int)location.z);
-	}
+    @Override
+    protected void entityInit() {
+        super.entityInit();
+        this.dataWatcher.addObject(DW_MIMIC_USER, "");
+        this.dataWatcher.addObject(DW_SEARCH_ITEM, new ItemStack(Items.apple));
+        this.dataWatcher.addObject(DW_TRANS_LOC_X, 0);
+        this.dataWatcher.addObject(DW_TRANS_LOC_Y, 0);
+        this.dataWatcher.addObject(DW_TRANS_LOC_Z, 0);
+        this.dataWatcher.addObject(DW_HELD_ITEM, new ItemStack(Items.paper));
+        this.dataWatcher.addObject(DW_DROP_LOC_X, 0);
+        this.dataWatcher.addObject(DW_DROP_LOC_Y, 0);
+        this.dataWatcher.addObject(DW_DROP_LOC_Z, 0);
+    }
 
-	public void setDropoffLocation(AMVector3 location){
-		this.dataWatcher.updateObject(DW_DROP_LOC_X, (int)location.x);
-		this.dataWatcher.updateObject(DW_DROP_LOC_Y, (int)location.y);
-		this.dataWatcher.updateObject(DW_DROP_LOC_Z, (int)location.z);
-	}
+    public void setSearchLocationAndItem(AMVector3 location, ItemStack item) {
+        if (this.worldObj.isRemote) return;
+        this.dataWatcher.updateObject(DW_SEARCH_ITEM, item);
+        this.dataWatcher.updateObject(DW_TRANS_LOC_X, (int) location.x);
+        this.dataWatcher.updateObject(DW_TRANS_LOC_Y, (int) location.y);
+        this.dataWatcher.updateObject(DW_TRANS_LOC_Z, (int) location.z);
+    }
 
-	public AMVector3 getSearchLocation(){
-		return new AMVector3(this.dataWatcher.getWatchableObjectInt(DW_TRANS_LOC_X), this.dataWatcher.getWatchableObjectInt(DW_TRANS_LOC_Y), this.dataWatcher.getWatchableObjectInt(DW_TRANS_LOC_Z));
-	}
+    public void setDropoffLocation(AMVector3 location) {
+        this.dataWatcher.updateObject(DW_DROP_LOC_X, (int) location.x);
+        this.dataWatcher.updateObject(DW_DROP_LOC_Y, (int) location.y);
+        this.dataWatcher.updateObject(DW_DROP_LOC_Z, (int) location.z);
+    }
 
-	public AMVector3 getDropLocation(){
-		return new AMVector3(this.dataWatcher.getWatchableObjectInt(DW_DROP_LOC_X), this.dataWatcher.getWatchableObjectInt(DW_DROP_LOC_Y), this.dataWatcher.getWatchableObjectInt(DW_DROP_LOC_Z));
-	}
+    public AMVector3 getSearchLocation() {
+        return new AMVector3(
+            this.dataWatcher.getWatchableObjectInt(DW_TRANS_LOC_X),
+            this.dataWatcher.getWatchableObjectInt(DW_TRANS_LOC_Y),
+            this.dataWatcher.getWatchableObjectInt(DW_TRANS_LOC_Z));
+    }
 
-	public ItemStack getSearchItem(){
-		return this.dataWatcher.getWatchableObjectItemStack(DW_SEARCH_ITEM);
-	}
+    public AMVector3 getDropLocation() {
+        return new AMVector3(
+            this.dataWatcher.getWatchableObjectInt(DW_DROP_LOC_X),
+            this.dataWatcher.getWatchableObjectInt(DW_DROP_LOC_Y),
+            this.dataWatcher.getWatchableObjectInt(DW_DROP_LOC_Z));
+    }
 
-	public void setHeldItem(ItemStack item){
-		this.dataWatcher.updateObject(DW_HELD_ITEM, item);
-	}
+    public ItemStack getSearchItem() {
+        return this.dataWatcher.getWatchableObjectItemStack(DW_SEARCH_ITEM);
+    }
 
-	public void setMimicUser(String userName){
-		this.dataWatcher.updateObject(DW_MIMIC_USER, userName);
-	}
+    public void setHeldItem(ItemStack item) {
+        this.dataWatcher.updateObject(DW_HELD_ITEM, item);
+    }
 
-	public String getMimicUser(){
-		return this.dataWatcher.getWatchableObjectString(DW_MIMIC_USER);
-	}
+    public void setMimicUser(String userName) {
+        this.dataWatcher.updateObject(DW_MIMIC_USER, userName);
+    }
 
-	public boolean hasSearchLocation(){
-		return !this.getSearchLocation().equals(AMVector3.zero());
-	}
+    public String getMimicUser() {
+        return this.dataWatcher.getWatchableObjectString(DW_MIMIC_USER);
+    }
 
-	public TileEntityCraftingAltar getAltarTarget(){
-		return this.altarTarget;
-	}
+    public boolean hasSearchLocation() {
+        return !this.getSearchLocation()
+            .equals(AMVector3.zero());
+    }
 
-	public void setAltarTarget(TileEntityCraftingAltar target){
-		this.altarTarget = target;
-	}
+    public TileEntityCraftingAltar getAltarTarget() {
+        return this.altarTarget;
+    }
 
-	private void initAI(){
-		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(1, new EntityAIOpenDoor(this, true));
-		this.tasks.addTask(2, new EntityAISpellmaking(this));
-	}
+    public void setAltarTarget(TileEntityCraftingAltar target) {
+        this.altarTarget = target;
+    }
 
-	@Override
-	public ItemStack getHeldItem(){
-		return this.dataWatcher.getWatchableObjectItemStack(DW_HELD_ITEM);
-	}
+    private void initAI() {
+        this.tasks.addTask(0, new EntityAISwimming(this));
+        this.tasks.addTask(1, new EntityAIOpenDoor(this, true));
+        this.tasks.addTask(2, new EntityAISpellmaking(this));
+    }
 
-	@Override
-	public void onUpdate(){
-		super.onUpdate();
-		if (this.worldObj.isRemote){
-			if (this.getMimicUser() != lastDWString){
-				lastDWString = getMimicUser();
-				this.skinHelper.setupCustomSkin(lastDWString);
-			}
-		}
-		if (!worldObj.isRemote && (altarTarget == null || !altarTarget.isCrafting())){
-			this.unSummon();
-		}
-	}
+    @Override
+    public ItemStack getHeldItem() {
+        return this.dataWatcher.getWatchableObjectItemStack(DW_HELD_ITEM);
+    }
 
-	@Override
-	protected String getHurtSound(){
-		return null;
-	}
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+        if (this.worldObj.isRemote) {
+            if (this.getMimicUser() != lastDWString) {
+                lastDWString = getMimicUser();
+                this.skinHelper.setupCustomSkin(lastDWString);
+            }
+        }
+        if (!worldObj.isRemote && (altarTarget == null || !altarTarget.isCrafting())) {
+            this.unSummon();
+        }
+    }
 
-	public void unSummon(){
-		this.attackEntityFrom(DamageSource.generic, 5000);
-	}
+    @Override
+    protected String getHurtSound() {
+        return null;
+    }
 
-	public ResourceLocation getLocationSkin(){
-		return this.skinHelper.getLocationSkin();
-	}
+    public void unSummon() {
+        this.attackEntityFrom(DamageSource.generic, 5000);
+    }
 
-	public ThreadDownloadImageData getTextureSkin(){
-		return this.skinHelper.getTextureSkin();
-	}
+    public ResourceLocation getLocationSkin() {
+        return this.skinHelper.getLocationSkin();
+    }
+
+    public ThreadDownloadImageData getTextureSkin() {
+        return this.skinHelper.getTextureSkin();
+    }
 }

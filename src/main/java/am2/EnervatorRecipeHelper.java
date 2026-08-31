@@ -1,48 +1,49 @@
 package am2;
 
-import net.minecraft.item.ItemStack;
-
 import java.util.HashMap;
 
-public class EnervatorRecipeHelper{
-	private HashMap<ItemStack, ItemStack> recipes;
+import net.minecraft.item.ItemStack;
 
-	public static final EnervatorRecipeHelper instance = new EnervatorRecipeHelper();
+public class EnervatorRecipeHelper {
 
-	private EnervatorRecipeHelper(){
-		recipes = new HashMap<ItemStack, ItemStack>();
-	}
+    private HashMap<ItemStack, ItemStack> recipes;
 
-	public void registerRecipe(ItemStack from, ItemStack to){
-		recipes.put(from.copy(), to);
-	}
+    public static final EnervatorRecipeHelper instance = new EnervatorRecipeHelper();
 
-	public HashMap getRecipes() {
-		return recipes;
-	}
+    private EnervatorRecipeHelper() {
+        recipes = new HashMap<ItemStack, ItemStack>();
+    }
 
-	public ItemStack getRecipe(ItemStack stack){
-		if (stack == null)
-			return null;
+    public void registerRecipe(ItemStack from, ItemStack to) {
+        recipes.put(from.copy(), to);
+    }
 
-		ItemStack toReturn = null;
+    public HashMap getRecipes() {
+        return recipes;
+    }
 
-		for (ItemStack possibleComponent : recipes.keySet()){
-			if (stack.getItem() == possibleComponent.getItem() && (possibleComponent.getItemDamage() == Short.MAX_VALUE || possibleComponent.getItemDamage() == stack.getItemDamage()))
-				toReturn = recipes.get(possibleComponent);
-		}
+    public ItemStack getRecipe(ItemStack stack) {
+        if (stack == null) return null;
 
-		if (toReturn == null){
-			if (stack.isItemStackDamageable()){
-				ItemStack newStack = stack.copy();
-				newStack.setItemDamage(stack.getItemDamage() + 1);
-				toReturn = newStack;
-			}
-		}
+        ItemStack toReturn = null;
 
-		if (toReturn != null) {
-			toReturn.stackSize = 1;
-		}
-		return toReturn;
-	}
+        for (ItemStack possibleComponent : recipes.keySet()) {
+            if (stack.getItem() == possibleComponent.getItem() && (possibleComponent.getItemDamage() == Short.MAX_VALUE
+                || possibleComponent.getItemDamage() == stack.getItemDamage()))
+                toReturn = recipes.get(possibleComponent);
+        }
+
+        if (toReturn == null) {
+            if (stack.isItemStackDamageable()) {
+                ItemStack newStack = stack.copy();
+                newStack.setItemDamage(stack.getItemDamage() + 1);
+                toReturn = newStack;
+            }
+        }
+
+        if (toReturn != null) {
+            toReturn.stackSize = 1;
+        }
+        return toReturn;
+    }
 }

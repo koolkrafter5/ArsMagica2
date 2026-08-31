@@ -7,24 +7,25 @@ import am2.api.math.AMVector3;
  *
  * @author Mithion
  */
-public interface IExtendedProperties{
-	public float getCurrentMana();
+public interface IExtendedProperties {
 
-	public float getMaxMana();
+    public float getCurrentMana();
 
-	public int getMarkDimension();
+    public float getMaxMana();
 
-	public int getMagicLevel();
+    public int getMarkDimension();
 
-	public int getNumSummons();
+    public int getMagicLevel();
 
-	public AMVector3 getMarkLocation();
+    public int getNumSummons();
 
-	public boolean getHasUnlockedAugmented();
+    public AMVector3 getMarkLocation();
 
-	public boolean getMarkSet();
+    public boolean getHasUnlockedAugmented();
 
-	public boolean setMagicLevelWithMana(int magicLevel);
+    public boolean getMarkSet();
 
-	public void setCurrentMana(float currentMana);
+    public boolean setMagicLevelWithMana(int magicLevel);
+
+    public void setCurrentMana(float currentMana);
 }

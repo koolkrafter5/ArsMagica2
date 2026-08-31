@@ -1,9 +1,5 @@
 package am2.blocks;
 
-import am2.blocks.tileentities.TileEntityCraftingAltar;
-import am2.texture.ResourceManager;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -14,96 +10,100 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockCraftingAltar extends PoweredBlock{
+import am2.blocks.tileentities.TileEntityCraftingAltar;
+import am2.texture.ResourceManager;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-	@SideOnly(Side.CLIENT)
-	private IIcon IIcon;
+public class BlockCraftingAltar extends PoweredBlock {
 
-	public BlockCraftingAltar(){
-		super(Material.rock);
-		this.setHardness(2.0f);
-		this.setResistance(2.0f);
-	}
+    @SideOnly(Side.CLIENT)
+    private IIcon IIcon;
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int i){
-		return new TileEntityCraftingAltar();
-	}
+    public BlockCraftingAltar() {
+        super(Material.rock);
+        this.setHardness(2.0f);
+        this.setResistance(2.0f);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(IBlockAccess iBlockAccess, int x, int y, int z, int meta){
-		return IIcon;
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return new TileEntityCraftingAltar();
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int meta){
-		if (meta == 1)
-			return IIcon;
-		return blockIcon;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(IBlockAccess iBlockAccess, int x, int y, int z, int meta) {
+        return IIcon;
+    }
 
-	@Override
-	public boolean renderAsNormalBlock(){
-		return false;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int side, int meta) {
+        if (meta == 1) return IIcon;
+        return blockIcon;
+    }
 
-	@Override
-	public int getRenderType(){
-		return BlocksCommonProxy.commonBlockRenderID;
-	}
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
 
-	@SideOnly(Side.CLIENT)
-	public Block getAltarMimicBlock(IBlockAccess world, int x, int y, int z){
+    @Override
+    public int getRenderType() {
+        return BlocksCommonProxy.commonBlockRenderID;
+    }
 
-		TileEntity te = world.getTileEntity(x, y, z);
+    @SideOnly(Side.CLIENT)
+    public Block getAltarMimicBlock(IBlockAccess world, int x, int y, int z) {
 
-		if (te == null || !(te instanceof TileEntityCraftingAltar) || !((TileEntityCraftingAltar)te).structureValid())
-			return this;
+        TileEntity te = world.getTileEntity(x, y, z);
 
-		Block[] blocks = new Block[4];
-		blocks[0] = world.getBlock(x - 1, y, z);
-		blocks[1] = world.getBlock(x + 1, y, z);
-		blocks[2] = world.getBlock(x, y, z + 1);
-		blocks[3] = world.getBlock(x, y, z - 1);
+        if (te == null || !(te instanceof TileEntityCraftingAltar) || !((TileEntityCraftingAltar) te).structureValid())
+            return this;
 
+        Block[] blocks = new Block[4];
+        blocks[0] = world.getBlock(x - 1, y, z);
+        blocks[1] = world.getBlock(x + 1, y, z);
+        blocks[2] = world.getBlock(x, y, z + 1);
+        blocks[3] = world.getBlock(x, y, z - 1);
 
-		if (blocks[0] != Blocks.air && blocks[0] == blocks[1]){
-			return blocks[0];
-		}else if (blocks[2] != Blocks.air && blocks[2] == blocks[3]){
-			return blocks[2];
-		}
+        if (blocks[0] != Blocks.air && blocks[0] == blocks[1]) {
+            return blocks[0];
+        } else if (blocks[2] != Blocks.air && blocks[2] == blocks[3]) {
+            return blocks[2];
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	@Override
-	public boolean isOpaqueCube(){
-		return false;
-	}
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 
-	@Override
-	public int getRenderBlockPass(){
-		return 1;
-	}
+    @Override
+    public int getRenderBlockPass() {
+        return 1;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister){
-		blockIcon = ResourceManager.RegisterTexture("CasterRuneSide", par1IconRegister);
-		IIcon = ResourceManager.RegisterTexture("RuneStone", par1IconRegister);
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister par1IconRegister) {
+        blockIcon = ResourceManager.RegisterTexture("CasterRuneSide", par1IconRegister);
+        IIcon = ResourceManager.RegisterTexture("RuneStone", par1IconRegister);
+    }
 
-	@Override
-	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9){
-		if (super.onBlockActivated(par1World, par2, par3, par4, par5EntityPlayer, par6, par7, par8, par9)){
-			TileEntity te = par1World.getTileEntity(par2, par3, par4);
-			if (te != null && te instanceof TileEntityCraftingAltar){
-				((TileEntityCraftingAltar)te).deactivate();
-			}
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer,
+        int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(par1World, par2, par3, par4, par5EntityPlayer, par6, par7, par8, par9)) {
+            TileEntity te = par1World.getTileEntity(par2, par3, par4);
+            if (te != null && te instanceof TileEntityCraftingAltar) {
+                ((TileEntityCraftingAltar) te).deactivate();
+            }
+            return false;
+        }
+        return true;
+    }
 }

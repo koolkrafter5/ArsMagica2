@@ -1,46 +1,51 @@
 package am2.commands;
 
-import am2.playerextensions.ExtendedProperties;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class RecoverKeystoneCommand extends CommandBase{
+import am2.playerextensions.ExtendedProperties;
 
-	@Override
-	public String getCommandName(){
-		return "recoverkeystone";
-	}
+public class RecoverKeystoneCommand extends CommandBase {
 
-	@Override
-	public int getRequiredPermissionLevel(){
-		return 2;
-	}
+    @Override
+    public String getCommandName() {
+        return "recoverkeystone";
+    }
 
-	@Override
-	public String getCommandUsage(ICommandSender var1){
-		return "/recoverkeystone [<player>]";
-	}
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 2;
+    }
 
-	@Override
-	public void processCommand(ICommandSender icommandsender, String[] astring){
-		if (astring.length != 1 && astring.length != 0){
-			throw new WrongUsageException(this.getCommandUsage(icommandsender), new Object[0]);
-		}
-		EntityPlayer player = null;
+    @Override
+    public String getCommandUsage(ICommandSender var1) {
+        return "/recoverkeystone [<player>]";
+    }
 
-		if (astring.length == 2){
-			player = getPlayer(icommandsender, astring[0]);
-		}else{
-			player = getCommandSenderAsPlayer(icommandsender);
-		}
+    @Override
+    public void processCommand(ICommandSender icommandsender, String[] astring) {
+        if (astring.length != 1 && astring.length != 0) {
+            throw new WrongUsageException(this.getCommandUsage(icommandsender), new Object[0]);
+        }
+        EntityPlayer player = null;
 
-		if (player == null) return;
+        if (astring.length == 2) {
+            player = getPlayer(icommandsender, astring[0]);
+        } else {
+            player = getCommandSenderAsPlayer(icommandsender);
+        }
 
-		ExtendedProperties.For(player).isRecoveringKeystone = true;
+        if (player == null) return;
 
-		func_152373_a(icommandsender, this, player.getCommandSenderName() + " is recovering a Keystone combination.", new Object[0]);
-	}
+        ExtendedProperties.For(player).isRecoveringKeystone = true;
+
+        func_152373_a(
+            icommandsender,
+            this,
+            player.getCommandSenderName() + " is recovering a Keystone combination.",
+            new Object[0]);
+    }
 
 }

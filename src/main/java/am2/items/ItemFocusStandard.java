@@ -1,36 +1,33 @@
 package am2.items;
 
-import am2.texture.ResourceManager;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Items;
 
-public class ItemFocusStandard extends ItemFocus implements ISpellFocus{
+import am2.texture.ResourceManager;
 
-	public ItemFocusStandard(){
-		super();
-	}
+public class ItemFocusStandard extends ItemFocus implements ISpellFocus {
 
-	@Override
-	public Object[] getRecipeItems(){
-		return new Object[]{
-				" R ", "RFR", " R ",
-				'R', Items.redstone,
-				'F', ItemsCommonProxy.lesserFocus
-		};
-	}
+    public ItemFocusStandard() {
+        super();
+    }
 
-	@Override
-	public String getInGameName(){
-		return "Focus";
-	}
+    @Override
+    public Object[] getRecipeItems() {
+        return new Object[] { " R ", "RFR", " R ", 'R', Items.redstone, 'F', ItemsCommonProxy.lesserFocus };
+    }
 
-	@Override
-	public int getFocusLevel(){
-		return 1;
-	}
+    @Override
+    public String getInGameName() {
+        return "Focus";
+    }
 
-	@Override
-	public void registerIcons(IIconRegister par1IconRegister){
-		this.itemIcon = ResourceManager.RegisterTexture("focus_standard", par1IconRegister);
-	}
+    @Override
+    public int getFocusLevel() {
+        return 1;
+    }
+
+    @Override
+    public void registerIcons(IIconRegister par1IconRegister) {
+        this.itemIcon = ResourceManager.RegisterTexture("focus_standard", par1IconRegister);
+    }
 }

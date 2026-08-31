@@ -1,19 +1,22 @@
 package am2.entities;
 
-import am2.items.ItemsCommonProxy;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+
+import am2.items.ItemsCommonProxy;
 
 public class EntityHallucination extends EntityMob {
 
@@ -31,15 +34,20 @@ public class EntityHallucination extends EntityMob {
     }
 
     public String getCommandSenderName() {
-        return this.hasCustomNameTag() ? this.getCustomNameTag() : StatCollector.translateToLocal("am2.entity.hallucination");
+        return this.hasCustomNameTag() ? this.getCustomNameTag()
+            : StatCollector.translateToLocal("am2.entity.hallucination");
     }
 
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(750D);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3D);
-        this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(1);
+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth)
+            .setBaseValue(750D);
+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
+            .setBaseValue(0.3D);
+        this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
+            .setBaseValue(3D);
+        this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance)
+            .setBaseValue(1);
     }
 
     public boolean isAIEnabled() {
@@ -55,18 +63,18 @@ public class EntityHallucination extends EntityMob {
     }
 
     public int getMaxSafePointTries() {
-        return this.getAttackTarget() == null ? 3 : 3 + (int)(this.getHealth() - 1.0F);
+        return this.getAttackTarget() == null ? 3 : 3 + (int) (this.getHealth() - 1.0F);
     }
 
     protected void entityInit() {
         super.entityInit();
         super.dataWatcher.addObject(17, "");
-        super.dataWatcher.addObject(18, Byte.valueOf((byte)0));
+        super.dataWatcher.addObject(18, Byte.valueOf((byte) 0));
     }
 
     public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {
         super.writeEntityToNBT(par1NBTTagCompound);
-        if(this.getTargetName() == null) {
+        if (this.getTargetName() == null) {
             par1NBTTagCompound.setString("Target", "");
         } else {
             par1NBTTagCompound.setString("Target", this.getTargetName());
@@ -78,7 +86,7 @@ public class EntityHallucination extends EntityMob {
     public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {
         super.readEntityFromNBT(par1NBTTagCompound);
         String s = par1NBTTagCompound.getString("Target");
-        if(s.length() > 0) {
+        if (s.length() > 0) {
             this.setTarget(s);
         }
 
@@ -109,7 +117,7 @@ public class EntityHallucination extends EntityMob {
     }
 
     public void setHallucinationType(int par1) {
-        super.dataWatcher.updateObject(18, Byte.valueOf((byte)par1));
+        super.dataWatcher.updateObject(18, Byte.valueOf((byte) par1));
     }
 
     public void onUpdate() {
@@ -125,8 +133,9 @@ public class EntityHallucination extends EntityMob {
     }
 
     protected void dropFewItems(boolean recentlyHit, int looting) {
-        if (rand.nextInt(3) == 0) this.entityDropItem(new ItemStack(ItemsCommonProxy.itemOre, 1, ItemsCommonProxy.itemOre.META_NIGHTMAREESSENCE), 0);
+        if (rand.nextInt(3) == 0) this.entityDropItem(
+            new ItemStack(ItemsCommonProxy.itemOre, 1, ItemsCommonProxy.itemOre.META_NIGHTMAREESSENCE),
+            0);
     }
-
 
 }

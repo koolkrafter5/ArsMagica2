@@ -1,29 +1,30 @@
 package am2.items;
 
-import am2.blocks.BlocksCommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-public class OreItem extends ItemBlock{
+import am2.blocks.BlocksCommonProxy;
 
-	public OreItem(){
-		this(BlocksCommonProxy.AMOres);
-	}
+public class OreItem extends ItemBlock {
 
-	public OreItem(Block block){
-		super(block);
-		setMaxDamage(0);
-		setHasSubtypes(true);
-	}
+    public OreItem() {
+        this(BlocksCommonProxy.AMOres);
+    }
 
-	@Override
-	public int getMetadata(int par1){
-		return par1;
-	}
+    public OreItem(Block block) {
+        super(block);
+        setMaxDamage(0);
+        setHasSubtypes(true);
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack){
-		return super.getUnlocalizedName() + "." + par1ItemStack.getItemDamage();
-	}
+    @Override
+    public int getMetadata(int par1) {
+        return par1;
+    }
+
+    @Override
+    public String getUnlocalizedName(ItemStack par1ItemStack) {
+        return super.getUnlocalizedName() + "." + par1ItemStack.getItemDamage();
+    }
 }

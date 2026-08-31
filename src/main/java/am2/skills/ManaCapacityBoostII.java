@@ -2,11 +2,11 @@ package am2.skills;
 
 import am2.api.spell.component.interfaces.ISkillTreeEntry;
 
-public class ManaCapacityBoostII implements ISkillTreeEntry{
+public class ManaCapacityBoostII implements ISkillTreeEntry {
 
-	@Override
-	public int getID(){
-		return 83;
-	}
+    @Override
+    public int getID() {
+        return 83;
+    }
 
 }

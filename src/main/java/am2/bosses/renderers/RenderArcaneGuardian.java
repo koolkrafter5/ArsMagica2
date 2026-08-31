@@ -1,21 +1,24 @@
 package am2.bosses.renderers;
 
-import am2.bosses.models.ModelArcaneGuardian;
-import am2.texture.ResourceManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderArcaneGuardian extends RenderBoss{
+import am2.bosses.models.ModelArcaneGuardian;
+import am2.texture.ResourceManager;
 
-	private static final ResourceLocation rLoc = new ResourceLocation("arsmagica2", ResourceManager.getMobTexturePath("bosses/arcane_guardian.png"));
+public class RenderArcaneGuardian extends RenderBoss {
 
-	public RenderArcaneGuardian(){
-		super(new ModelArcaneGuardian());
-	}
+    private static final ResourceLocation rLoc = new ResourceLocation(
+        "arsmagica2",
+        ResourceManager.getMobTexturePath("bosses/arcane_guardian.png"));
 
-	@Override
-	protected ResourceLocation getEntityTexture(Entity entity){
-		return rLoc;
-	}
+    public RenderArcaneGuardian() {
+        super(new ModelArcaneGuardian());
+    }
+
+    @Override
+    protected ResourceLocation getEntityTexture(Entity entity) {
+        return rLoc;
+    }
 
 }

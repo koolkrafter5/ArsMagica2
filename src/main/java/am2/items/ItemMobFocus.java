@@ -1,40 +1,36 @@
 package am2.items;
 
-import am2.texture.ResourceManager;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.init.Items;
 
-public class ItemMobFocus extends ItemFilterFocus{
+import am2.texture.ResourceManager;
 
-	protected ItemMobFocus(){
-		super();
-	}
+public class ItemMobFocus extends ItemFilterFocus {
 
-	@Override
-	public Class getFilterClass(){
-		return IMob.class;
-	}
+    protected ItemMobFocus() {
+        super();
+    }
 
-	@Override
-	public Object[] getRecipeItems(){
-		return new Object[]{
-				"S",
-				"F",
-				"S",
-				Character.valueOf('S'), Items.iron_sword,
-				Character.valueOf('F'), ItemsCommonProxy.standardFocus
-		};
-	}
+    @Override
+    public Class getFilterClass() {
+        return IMob.class;
+    }
 
-	@Override
-	public String getInGameName(){
-		return "Monster Focus";
-	}
+    @Override
+    public Object[] getRecipeItems() {
+        return new Object[] { "S", "F", "S", Character.valueOf('S'), Items.iron_sword, Character.valueOf('F'),
+            ItemsCommonProxy.standardFocus };
+    }
 
-	@Override
-	public void registerIcons(IIconRegister par1IconRegister){
-		this.itemIcon = ResourceManager.RegisterTexture("focus_seer_monster", par1IconRegister);
-	}
+    @Override
+    public String getInGameName() {
+        return "Monster Focus";
+    }
+
+    @Override
+    public void registerIcons(IIconRegister par1IconRegister) {
+        this.itemIcon = ResourceManager.RegisterTexture("focus_seer_monster", par1IconRegister);
+    }
 
 }

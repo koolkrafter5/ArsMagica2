@@ -1,29 +1,31 @@
 package am2.texture;
 
+import java.util.HashMap;
+
+import net.minecraft.util.IIcon;
+
 import am2.api.spell.ISpellIconManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.util.IIcon;
-
-import java.util.HashMap;
 
 @SideOnly(Side.CLIENT)
-public class SpellIconManager implements ISpellIconManager{
-	private static HashMap<String, IIcon> icons;
+public class SpellIconManager implements ISpellIconManager {
 
-	public static final SpellIconManager instance = new SpellIconManager();
+    private static HashMap<String, IIcon> icons;
 
-	private SpellIconManager(){
-		icons = new HashMap<String, IIcon>();
-	}
+    public static final SpellIconManager instance = new SpellIconManager();
 
-	@Override
-	public void registerIcon(String skillName, IIcon IIcon){
-		icons.put(skillName, IIcon);
-	}
+    private SpellIconManager() {
+        icons = new HashMap<String, IIcon>();
+    }
 
-	@Override
-	public IIcon getIcon(String skillName){
-		return icons.get(skillName);
-	}
+    @Override
+    public void registerIcon(String skillName, IIcon IIcon) {
+        icons.put(skillName, IIcon);
+    }
+
+    @Override
+    public IIcon getIcon(String skillName) {
+        return icons.get(skillName);
+    }
 }

@@ -5,10 +5,10 @@ package am2.api.illeffect;
  *
  * @author Mithion
  */
-public enum IllEffectSeverity{
-	MINOR,
-	MODERATE,
-	MAJOR,
-	SEVERE,
-	FATAL
+public enum IllEffectSeverity {
+    MINOR,
+    MODERATE,
+    MAJOR,
+    SEVERE,
+    FATAL
 }

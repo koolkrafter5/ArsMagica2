@@ -1,10 +1,13 @@
 package am2.customdata;
 
-import am2.network.AMDataWriter;
-import am2.network.AMNetHandler;
-import am2.network.AMPacketIDs;
-import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.client.Minecraft;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,23 +17,21 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.DimensionManager;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import am2.network.AMDataWriter;
+import am2.network.AMNetHandler;
+import am2.network.AMPacketIDs;
 
 // per-world and per-dimension data. Syncing individual variables sucks.
 public class CustomWorldData {
 
     private static Map<Integer, HashMap<String, String>> worldDataArray = new HashMap<Integer, HashMap<String, String>>();
 
-    private static final HashMap<String, String> WorldVarsFor(World world){
-        if (world == null)
-            return new HashMap<String, String>();
+    private static final HashMap<String, String> WorldVarsFor(World world) {
+        if (world == null) return new HashMap<String, String>();
 
-        if (worldDataArray.containsKey(world.provider.dimensionId)){
+        if (worldDataArray.containsKey(world.provider.dimensionId)) {
             return worldDataArray.get(world.provider.dimensionId);
-        }else{
+        } else {
             HashMap<String, String> reg = new HashMap<String, String>();
             worldDataArray.put(world.provider.dimensionId, reg);
             return reg;
@@ -51,7 +52,9 @@ public class CustomWorldData {
         syncWorldVarsToClients(world, null);
     }
 
-    public static void setWorldVarNoSync(World world, String varName, String varValue) { // doesn't sync anywhere. Used for easing network load and for client updating
+    public static void setWorldVarNoSync(World world, String varName, String varValue) { // doesn't sync anywhere. Used
+                                                                                         // for easing network load and
+                                                                                         // for client updating
         WorldVarsFor(world).put(varName, varValue);
     }
 
@@ -69,13 +72,14 @@ public class CustomWorldData {
         AMNetHandler.INSTANCE.sendPacketToServer(AMPacketIDs.REQUESTWORLDDATACHANGE, writer.generate());
     }
 
-    private static void syncWorldVarsToClients(World world, EntityPlayer p) { // Yes, this method should be abstracted away. No, I'm not going to do it.
+    private static void syncWorldVarsToClients(World world, EntityPlayer p) { // Yes, this method should be abstracted
+                                                                              // away. No, I'm not going to do it.
         AMDataWriter writer = new AMDataWriter();
         NBTTagCompound world_data = new NBTTagCompound();
         int c = 0;
         HashMap<String, String> data = WorldVarsFor(world);
         for (Object o : data.keySet()) {
-            String iS = (String)o;
+            String iS = (String) o;
             String iValue = data.get(iS);
             world_data.setString("dataentry" + c, iValue);
             world_data.setString("dataentryname" + c, iS);
@@ -86,22 +90,30 @@ public class CustomWorldData {
         writer.add(world_data);
 
         // if null is passed, syncs to all clients
-        if (p == null) AMNetHandler.INSTANCE.sendPacketToAllClients(AMPacketIDs.SYNCWORLDDATATOCLIENTS, writer.generate());
-        else if (p instanceof EntityPlayerMP) AMNetHandler.INSTANCE.sendPacketToClientPlayer((EntityPlayerMP) p, AMPacketIDs.SYNCWORLDDATATOCLIENTS, writer.generate());
+        if (p == null)
+            AMNetHandler.INSTANCE.sendPacketToAllClients(AMPacketIDs.SYNCWORLDDATATOCLIENTS, writer.generate());
+        else if (p instanceof EntityPlayerMP) AMNetHandler.INSTANCE
+            .sendPacketToClientPlayer((EntityPlayerMP) p, AMPacketIDs.SYNCWORLDDATATOCLIENTS, writer.generate());
     }
 
     public static void saveAllWorldData() {
         try {
             if (DimensionManager.getWorld(0) != null) {
                 if (DimensionManager.getWorld(0).isRemote) return;
-                ISaveHandler handler = DimensionManager.getWorld(0).getSaveHandler();
+                ISaveHandler handler = DimensionManager.getWorld(0)
+                    .getSaveHandler();
                 if (handler != null && handler instanceof SaveHandler) {
                     File saveFile = new File(((SaveHandler) handler).getWorldDirectory(), "AM2WorldData.txt");
                     saveFile.createNewFile();
                     ArrayList<String> lines = new ArrayList<String>();
                     for (Map.Entry<Integer, HashMap<String, String>> perDimension : worldDataArray.entrySet()) {
-                        for (Map.Entry<String, String> perDimensionEntries : perDimension.getValue().entrySet()) {
-                            lines.add(perDimension.getKey() + ":::" + perDimensionEntries.getKey() + ":::" + perDimensionEntries.getValue());
+                        for (Map.Entry<String, String> perDimensionEntries : perDimension.getValue()
+                            .entrySet()) {
+                            lines.add(
+                                perDimension.getKey() + ":::"
+                                    + perDimensionEntries.getKey()
+                                    + ":::"
+                                    + perDimensionEntries.getValue());
                         }
                     }
                     PrintWriter pw = new PrintWriter(saveFile);
@@ -118,7 +130,8 @@ public class CustomWorldData {
         try {
             if (DimensionManager.getWorld(0) != null) {
                 if (DimensionManager.getWorld(0).isRemote) return;
-                ISaveHandler handler = DimensionManager.getWorld(0).getSaveHandler();
+                ISaveHandler handler = DimensionManager.getWorld(0)
+                    .getSaveHandler();
                 if (handler != null && handler instanceof SaveHandler) {
                     File saveFile = new File(((SaveHandler) handler).getWorldDirectory(), "AM2WorldData.txt");
                     if (saveFile.exists()) {
@@ -137,7 +150,10 @@ public class CustomWorldData {
 
                         // this avoids syncing the same dimension multiple times clogging up the network
                         for (String entry : lines) {
-                            setWorldVarNoSync(DimensionManager.getWorld(Integer.valueOf(entry.split(":::")[0])), entry.split(":::")[1], entry.split(":::")[2]);
+                            setWorldVarNoSync(
+                                DimensionManager.getWorld(Integer.valueOf(entry.split(":::")[0])),
+                                entry.split(":::")[1],
+                                entry.split(":::")[2]);
                         }
                         syncAllWorldVarsToClients(null);
                     }

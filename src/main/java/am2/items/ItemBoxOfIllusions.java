@@ -1,6 +1,5 @@
 package am2.items;
 
-import am2.items.renderers.RenderItemBoxOfIllusions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,22 +7,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
+import am2.items.renderers.RenderItemBoxOfIllusions;
+
 public class ItemBoxOfIllusions extends ArsMagicaItem {
 
     @Override
-    public String getItemStackDisplayName(ItemStack p_77653_1_)
-    {
-        return "§a" + ("" + StatCollector.translateToLocal(this.getUnlocalizedNameInefficiently(p_77653_1_) + ".name")).trim() + "§r";
+    public String getItemStackDisplayName(ItemStack p_77653_1_) {
+        return "§a"
+            + ("" + StatCollector.translateToLocal(this.getUnlocalizedNameInefficiently(p_77653_1_) + ".name")).trim()
+            + "§r";
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player){
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) RenderItemBoxOfIllusions.doRotations = true;
         return super.onItemRightClick(stack, world, player);
     }
 
     // courtesy of MPM
-    public static void Copy(EntityLivingBase copied, EntityLivingBase entity){
+    public static void Copy(EntityLivingBase copied, EntityLivingBase entity) {
         entity.worldObj = copied.worldObj;
 
         entity.deathTime = copied.deathTime;
@@ -79,7 +81,7 @@ public class ItemBoxOfIllusions extends ArsMagicaItem {
 
         entity.riddenByEntity = copied.riddenByEntity;
 
-        if(entity instanceof EntityPlayer && copied instanceof EntityPlayer){
+        if (entity instanceof EntityPlayer && copied instanceof EntityPlayer) {
             EntityPlayer ePlayer = (EntityPlayer) entity;
             EntityPlayer cPlayer = (EntityPlayer) copied;
 
@@ -94,11 +96,11 @@ public class ItemBoxOfIllusions extends ArsMagicaItem {
             ePlayer.field_71085_bR = cPlayer.field_71085_bR;
         }
 
-        for(int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             entity.setCurrentItemOrArmor(i, copied.getEquipmentInSlot(i));
         }
 
-        if(entity instanceof EntityDragon){
+        if (entity instanceof EntityDragon) {
             entity.rotationYaw += 180;
         }
     }

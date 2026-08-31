@@ -2,21 +2,20 @@ package am2.buffs;
 
 import net.minecraft.entity.EntityLivingBase;
 
-public class BuffEffectPsychedelic extends BuffEffect{
-	public BuffEffectPsychedelic(int duration, int amplifier){
-		super(BuffList.psychedelic.id, duration, amplifier);
-	}
+public class BuffEffectPsychedelic extends BuffEffect {
 
-	@Override
-	public void applyEffect(EntityLivingBase entityliving){
-	}
+    public BuffEffectPsychedelic(int duration, int amplifier) {
+        super(BuffList.psychedelic.id, duration, amplifier);
+    }
 
-	@Override
-	public void stopEffect(EntityLivingBase entityliving){
-	}
+    @Override
+    public void applyEffect(EntityLivingBase entityliving) {}
 
-	@Override
-	protected String spellBuffName(){
-		return "Psychedelic";
-	}
+    @Override
+    public void stopEffect(EntityLivingBase entityliving) {}
+
+    @Override
+    protected String spellBuffName() {
+        return "Psychedelic";
+    }
 }

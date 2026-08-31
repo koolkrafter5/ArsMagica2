@@ -1,9 +1,5 @@
 package am2.items;
 
-import am2.AMCore;
-import am2.guis.ArsMagicaGuiIdList;
-import am2.texture.ResourceManager;
-import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -11,84 +7,97 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class ItemRuneBag extends Item{
+import am2.AMCore;
+import am2.guis.ArsMagicaGuiIdList;
+import am2.texture.ResourceManager;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 
-	public ItemRuneBag(){
-		super();
-	}
+public class ItemRuneBag extends Item {
 
-	@Override
-	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer entityplayer){
-		if (entityplayer.isSneaking()){
-			FMLNetworkHandler.openGui(entityplayer, AMCore.instance, ArsMagicaGuiIdList.GUI_RUNE_BAG, world, (int)entityplayer.posX, (int)entityplayer.posY, (int)entityplayer.posZ);
-		}
-		return stack;
-	}
+    public ItemRuneBag() {
+        super();
+    }
 
-	private ItemStack[] getMyInventory(ItemStack itemStack){
-		return ReadFromStackTagCompound(itemStack);
-	}
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer entityplayer) {
+        if (entityplayer.isSneaking()) {
+            FMLNetworkHandler.openGui(
+                entityplayer,
+                AMCore.instance,
+                ArsMagicaGuiIdList.GUI_RUNE_BAG,
+                world,
+                (int) entityplayer.posX,
+                (int) entityplayer.posY,
+                (int) entityplayer.posZ);
+        }
+        return stack;
+    }
 
-	public void UpdateStackTagCompound(ItemStack itemStack, ItemStack[] values){
-		if (itemStack.stackTagCompound == null){
-			itemStack.stackTagCompound = new NBTTagCompound();
-		}
-		for (int i = 0; i < values.length; ++i){
-			ItemStack stack = values[i];
-			if (stack == null){
-				itemStack.stackTagCompound.removeTag("runebagmeta" + i);
-				continue;
-			}else{
-				itemStack.stackTagCompound.setInteger("runebagmeta" + i, stack.getItemDamage());
-			}
-		}
-	}
+    private ItemStack[] getMyInventory(ItemStack itemStack) {
+        return ReadFromStackTagCompound(itemStack);
+    }
 
-	@Override
-	public boolean getShareTag(){
-		return true;
-	}
+    public void UpdateStackTagCompound(ItemStack itemStack, ItemStack[] values) {
+        if (itemStack.stackTagCompound == null) {
+            itemStack.stackTagCompound = new NBTTagCompound();
+        }
+        for (int i = 0; i < values.length; ++i) {
+            ItemStack stack = values[i];
+            if (stack == null) {
+                itemStack.stackTagCompound.removeTag("runebagmeta" + i);
+                continue;
+            } else {
+                itemStack.stackTagCompound.setInteger("runebagmeta" + i, stack.getItemDamage());
+            }
+        }
+    }
 
-	public void UpdateStackTagCompound(ItemStack itemStack, InventoryRuneBag inventory){
-		if (itemStack.stackTagCompound == null){
-			itemStack.stackTagCompound = new NBTTagCompound();
-		}
-		for (int i = 0; i < inventory.getSizeInventory(); ++i){
-			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack == null){
-				continue;
-			}else{
-				itemStack.stackTagCompound.setInteger("runebagmeta" + i, stack.getItemDamage());
-			}
-		}
-	}
+    @Override
+    public boolean getShareTag() {
+        return true;
+    }
 
-	public ItemStack[] ReadFromStackTagCompound(ItemStack itemStack){
-		if (itemStack.stackTagCompound == null){
-			return new ItemStack[InventoryRuneBag.inventorySize];
-		}
-		ItemStack[] items = new ItemStack[InventoryRuneBag.inventorySize];
-		for (int i = 0; i < items.length; ++i){
-			if (!itemStack.stackTagCompound.hasKey("runebagmeta" + i) || itemStack.stackTagCompound.getInteger("runebagmeta" + i) == -1){
-				items[i] = null;
-				continue;
-			}
-			int meta = 0;
-			meta = itemStack.stackTagCompound.getInteger("runebagmeta" + i);
-			items[i] = new ItemStack(ItemsCommonProxy.rune, 1, meta);
-		}
-		return items;
-	}
+    public void UpdateStackTagCompound(ItemStack itemStack, InventoryRuneBag inventory) {
+        if (itemStack.stackTagCompound == null) {
+            itemStack.stackTagCompound = new NBTTagCompound();
+        }
+        for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack == null) {
+                continue;
+            } else {
+                itemStack.stackTagCompound.setInteger("runebagmeta" + i, stack.getItemDamage());
+            }
+        }
+    }
 
-	public InventoryRuneBag ConvertToInventory(ItemStack runeBagStack){
-		InventoryRuneBag irb = new InventoryRuneBag();
-		irb.SetInventoryContents(getMyInventory(runeBagStack));
-		return irb;
-	}
+    public ItemStack[] ReadFromStackTagCompound(ItemStack itemStack) {
+        if (itemStack.stackTagCompound == null) {
+            return new ItemStack[InventoryRuneBag.inventorySize];
+        }
+        ItemStack[] items = new ItemStack[InventoryRuneBag.inventorySize];
+        for (int i = 0; i < items.length; ++i) {
+            if (!itemStack.stackTagCompound.hasKey("runebagmeta" + i)
+                || itemStack.stackTagCompound.getInteger("runebagmeta" + i) == -1) {
+                items[i] = null;
+                continue;
+            }
+            int meta = 0;
+            meta = itemStack.stackTagCompound.getInteger("runebagmeta" + i);
+            items[i] = new ItemStack(ItemsCommonProxy.rune, 1, meta);
+        }
+        return items;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister par1IconRegister){
-		this.itemIcon = ResourceManager.RegisterTexture("rune_bag", par1IconRegister);
-	}
+    public InventoryRuneBag ConvertToInventory(ItemStack runeBagStack) {
+        InventoryRuneBag irb = new InventoryRuneBag();
+        irb.SetInventoryContents(getMyInventory(runeBagStack));
+        return irb;
+    }
+
+    @Override
+    public void registerIcons(IIconRegister par1IconRegister) {
+        this.itemIcon = ResourceManager.RegisterTexture("rune_bag", par1IconRegister);
+    }
 
 }

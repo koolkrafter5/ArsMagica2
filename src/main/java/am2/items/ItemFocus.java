@@ -1,27 +1,28 @@
 package am2.items;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
-public abstract class ItemFocus extends ArsMagicaItem{
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-	protected ItemFocus(){
-		super();
-	}
+public abstract class ItemFocus extends ArsMagicaItem {
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public abstract void registerIcons(IIconRegister par1IconRegister);
+    protected ItemFocus() {
+        super();
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconFromDamageForRenderPass(int dmg, int pass){
-		return this.itemIcon;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public abstract void registerIcons(IIconRegister par1IconRegister);
 
-	public abstract Object[] getRecipeItems();
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIconFromDamageForRenderPass(int dmg, int pass) {
+        return this.itemIcon;
+    }
 
-	public abstract String getInGameName();
+    public abstract Object[] getRecipeItems();
+
+    public abstract String getInGameName();
 }

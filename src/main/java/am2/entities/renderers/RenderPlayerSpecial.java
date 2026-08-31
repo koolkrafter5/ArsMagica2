@@ -1,22 +1,18 @@
 package am2.entities.renderers;
 
-import am2.entities.models.ModelPlayerSpecial;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import static net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesMagicka.playerModelMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 
-import java.util.Map;
-import java.util.UUID;
-
-import static net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesMagicka.playerModelMap;
+import am2.entities.models.ModelPlayerSpecial;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class RenderPlayerSpecial extends RenderPlayer {
@@ -36,7 +32,8 @@ public class RenderPlayerSpecial extends RenderPlayer {
     }
 
     @Override
-    public void doRender(AbstractClientPlayer player, double x, double y, double z, float someFloat, float partialTickTime) {
+    public void doRender(AbstractClientPlayer player, double x, double y, double z, float someFloat,
+        float partialTickTime) {
         super.doRender(player, x, y, z, someFloat, partialTickTime);
     }
 
@@ -47,7 +44,9 @@ public class RenderPlayerSpecial extends RenderPlayer {
 
     @Override
     protected ResourceLocation getEntityTexture(AbstractClientPlayer player) {
-        return new ResourceLocation("arsmagica2", "textures/models/" + playerModelMap.get(((EntityPlayer)player).getCommandSenderName()) + ".png");
+        return new ResourceLocation(
+            "arsmagica2",
+            "textures/models/" + playerModelMap.get(((EntityPlayer) player).getCommandSenderName()) + ".png");
     }
 
     @Override
@@ -62,11 +61,14 @@ public class RenderPlayerSpecial extends RenderPlayer {
 
     @Override
     public void renderFirstPersonArm(EntityPlayer player) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(getEntityTexture(player));
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(getEntityTexture(player));
 
         super.renderFirstPersonArm(player);
 
-        // This call is not needed at all due to bipedRightArmwear being a Child of bipedRightArm, therefore moving and rendering with it automatically already.
-        //((ModelPlayer) modelBipedMain).bipedRightArmwear.render(0.0625F);
+        // This call is not needed at all due to bipedRightArmwear being a Child of bipedRightArm, therefore moving and
+        // rendering with it automatically already.
+        // ((ModelPlayer) modelBipedMain).bipedRightArmwear.render(0.0625F);
     }
 }

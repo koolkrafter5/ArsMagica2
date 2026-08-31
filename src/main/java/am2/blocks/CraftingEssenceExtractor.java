@@ -1,108 +1,105 @@
 package am2.blocks;
 
-import am2.containers.ContainerEssenceRefiner;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class CraftingEssenceExtractor implements IInventory{
+import am2.containers.ContainerEssenceRefiner;
 
-	private ItemStack stackList[];
-	private Container eventHandler;
+public class CraftingEssenceExtractor implements IInventory {
 
-	public CraftingEssenceExtractor(ContainerEssenceRefiner container){
-		stackList = new ItemStack[getSizeInventory()];
-		eventHandler = container;
-	}
+    private ItemStack stackList[];
+    private Container eventHandler;
 
-	@Override
-	public int getSizeInventory(){
-		return 5;
-	}
+    public CraftingEssenceExtractor(ContainerEssenceRefiner container) {
+        stackList = new ItemStack[getSizeInventory()];
+        eventHandler = container;
+    }
 
-	@Override
-	public String getInventoryName(){
-		return "Extracting";
-	}
+    @Override
+    public int getSizeInventory() {
+        return 5;
+    }
 
-	@Override
-	public boolean hasCustomInventoryName(){
-		return false;
-	}
+    @Override
+    public String getInventoryName() {
+        return "Extracting";
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return false;
-	}
+    @Override
+    public boolean hasCustomInventoryName() {
+        return false;
+    }
 
-	public ItemStack getStackInSlot(int i){
-		if (i >= getSizeInventory()){
-			return null;
-		}else{
-			return stackList[i];
-		}
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return false;
+    }
 
-	public ItemStack getStackInRowAndColumn(int i, int j){
-		return null;
-	}
+    public ItemStack getStackInSlot(int i) {
+        if (i >= getSizeInventory()) {
+            return null;
+        } else {
+            return stackList[i];
+        }
+    }
 
-	public ItemStack decrStackSize(int i, int j){
-		if (stackList[i] != null){
-			if (stackList[i].stackSize <= j){
-				ItemStack itemstack = stackList[i];
-				stackList[i] = null;
-				eventHandler.onCraftMatrixChanged(this);
-				return itemstack;
-			}
-			ItemStack itemstack1 = stackList[i].splitStack(j);
-			if (stackList[i].stackSize == 0){
-				stackList[i] = null;
-			}
-			eventHandler.onCraftMatrixChanged(this);
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
+    public ItemStack getStackInRowAndColumn(int i, int j) {
+        return null;
+    }
 
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		stackList[i] = itemstack;
-		eventHandler.onCraftMatrixChanged(this);
-	}
+    public ItemStack decrStackSize(int i, int j) {
+        if (stackList[i] != null) {
+            if (stackList[i].stackSize <= j) {
+                ItemStack itemstack = stackList[i];
+                stackList[i] = null;
+                eventHandler.onCraftMatrixChanged(this);
+                return itemstack;
+            }
+            ItemStack itemstack1 = stackList[i].splitStack(j);
+            if (stackList[i].stackSize == 0) {
+                stackList[i] = null;
+            }
+            eventHandler.onCraftMatrixChanged(this);
+            return itemstack1;
+        } else {
+            return null;
+        }
+    }
 
-	public int getInventoryStackLimit(){
-		return 64;
-	}
+    public void setInventorySlotContents(int i, ItemStack itemstack) {
+        stackList[i] = itemstack;
+        eventHandler.onCraftMatrixChanged(this);
+    }
 
-	public void onInventoryChanged(){
-	}
+    public int getInventoryStackLimit() {
+        return 64;
+    }
 
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
-		return true;
-	}
+    public void onInventoryChanged() {}
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i){
-		if (stackList[i] != null){
-			ItemStack itemstack = stackList[i];
-			stackList[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+        return true;
+    }
 
-	@Override
-	public void closeInventory(){
-	}
+    @Override
+    public ItemStack getStackInSlotOnClosing(int i) {
+        if (stackList[i] != null) {
+            ItemStack itemstack = stackList[i];
+            stackList[i] = null;
+            return itemstack;
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public void markDirty(){
-	}
+    @Override
+    public void closeInventory() {}
 
-	@Override
-	public void openInventory(){
-	}
+    @Override
+    public void markDirty() {}
+
+    @Override
+    public void openInventory() {}
 }

@@ -1,29 +1,29 @@
 package am2.render3d;
 
-public class OBJNormal{
-	public float i;
-	public float j;
-	public float k;
+public class OBJNormal {
 
-	public OBJNormal(){
-	}
+    public float i;
+    public float j;
+    public float k;
 
-	public OBJNormal(float i, float j, float k){
-		this.i = i;
-		this.j = j;
-		this.k = k;
-	}
+    public OBJNormal() {}
 
-	public void normalize(){
-		float a = (float)Math.sqrt((i * i) + (j * j) + (k * k));
-		i = i / a;
-		j = j / a;
-		k = k / a;
-	}
+    public OBJNormal(float i, float j, float k) {
+        this.i = i;
+        this.j = j;
+        this.k = k;
+    }
 
-	public void flip(){
-		i = 1 - i;
-		j = 1 - j;
-		k = 1 - k;
-	}
+    public void normalize() {
+        float a = (float) Math.sqrt((i * i) + (j * j) + (k * k));
+        i = i / a;
+        j = j / a;
+        k = k / a;
+    }
+
+    public void flip() {
+        i = 1 - i;
+        j = 1 - j;
+        k = 1 - k;
+    }
 }

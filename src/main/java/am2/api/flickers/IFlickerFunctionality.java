@@ -1,22 +1,24 @@
 package am2.api.flickers;
 
-import am2.api.spell.enums.Affinity;
 import net.minecraft.world.World;
 
-public interface IFlickerFunctionality{
-	boolean RequiresPower();
+import am2.api.spell.enums.Affinity;
 
-	int PowerPerOperation();
+public interface IFlickerFunctionality {
 
-	boolean DoOperation(World worldObj, IFlickerController controller, boolean powered);
+    boolean RequiresPower();
 
-	boolean DoOperation(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers);
+    int PowerPerOperation();
 
-	void RemoveOperator(World worldObj, IFlickerController controller, boolean powered);
+    boolean DoOperation(World worldObj, IFlickerController controller, boolean powered);
 
-	int TimeBetweenOperation(boolean powered, Affinity[] flickers);
+    boolean DoOperation(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers);
 
-	void RemoveOperator(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers);
+    void RemoveOperator(World worldObj, IFlickerController controller, boolean powered);
 
-	Object[] getRecipe();
+    int TimeBetweenOperation(boolean powered, Affinity[] flickers);
+
+    void RemoveOperator(World worldObj, IFlickerController controller, boolean powered, Affinity[] flickers);
+
+    Object[] getRecipe();
 }

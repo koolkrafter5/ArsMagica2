@@ -1,47 +1,49 @@
 package am2.api.math;
 
-public class AMPlane{
-	AMVector3 planeDef[];
+public class AMPlane {
 
-	public AMPlane(AMVector3... plane){
-		planeDef = plane;
-	}
+    AMVector3 planeDef[];
 
-	private AMVector3 planeNormal(){
-		AMVector3 vVector1 = new AMVector3(planeDef[2], planeDef[0]);
-		AMVector3 vVector2 = new AMVector3(planeDef[1], planeDef[0]);
+    public AMPlane(AMVector3... plane) {
+        planeDef = plane;
+    }
 
-		AMVector3 vNormal = AMVector3.crossProduct(vVector1, vVector2);
+    private AMVector3 planeNormal() {
+        AMVector3 vVector1 = new AMVector3(planeDef[2], planeDef[0]);
+        AMVector3 vVector2 = new AMVector3(planeDef[1], planeDef[0]);
 
-		vNormal.normalize();
-		return vNormal;
-	}
+        AMVector3 vNormal = AMVector3.crossProduct(vVector1, vVector2);
 
-	private float planeDistance(AMVector3 normal, AMVector3 point){
-		float distance = 0;
-		distance = -((normal.x * point.x) + (normal.y * point.y) + (normal.z * point.z));
+        vNormal.normalize();
+        return vNormal;
+    }
 
-		return distance;
-	}
+    private float planeDistance(AMVector3 normal, AMVector3 point) {
+        float distance = 0;
+        distance = -((normal.x * point.x) + (normal.y * point.y) + (normal.z * point.z));
 
-	public boolean lineSegmentCrosses(AMVector3 p1, AMVector3 p2){
-		float distance1 = 0, distance2 = 0;
+        return distance;
+    }
 
-		AMVector3 vNormal = planeNormal();
+    public boolean lineSegmentCrosses(AMVector3 p1, AMVector3 p2) {
+        float distance1 = 0, distance2 = 0;
 
-		float originDistance = planeDistance(vNormal, planeDef[0]);
+        AMVector3 vNormal = planeNormal();
 
-		distance1 = ((vNormal.x * p1.x) +                    // Ax +
-				(vNormal.y * p1.y) +                    // Bx +
-				(vNormal.z * p1.z)) + originDistance;    // Cz + D
+        float originDistance = planeDistance(vNormal, planeDef[0]);
 
-		distance2 = ((vNormal.x * p2.x) +                    // Ax +
-				(vNormal.y * p2.y) +                    // Bx +
-				(vNormal.z * p2.z)) + originDistance;    // Cz + D
+        distance1 = ((vNormal.x * p1.x) + // Ax +
+            (vNormal.y * p1.y) + // Bx +
+            (vNormal.z * p1.z)) + originDistance; // Cz + D
 
-		if (distance1 * distance2 >= 0)            // Check to see if both point's distances are both negative or both positive
-			return false;                        // Return false if each point has the same sign.  -1 and 1 would mean each point is on either side of the plane.  -1 -2 or 3 4 wouldn't...
+        distance2 = ((vNormal.x * p2.x) + // Ax +
+            (vNormal.y * p2.y) + // Bx +
+            (vNormal.z * p2.z)) + originDistance; // Cz + D
 
-		return true;                            // The line intersected the plane, Return TRUE
-	}
+        if (distance1 * distance2 >= 0) // Check to see if both point's distances are both negative or both positive
+            return false; // Return false if each point has the same sign. -1 and 1 would mean each point is on either
+                          // side of the plane. -1 -2 or 3 4 wouldn't...
+
+        return true; // The line intersected the plane, Return TRUE
+    }
 }

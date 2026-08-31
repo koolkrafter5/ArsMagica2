@@ -1,55 +1,57 @@
 package am2.particles;
 
-import am2.api.math.AMVector3;
 import net.minecraft.util.MathHelper;
 
-public class ParticleFleePoint extends ParticleController{
+import am2.api.math.AMVector3;
 
-	private AMVector3 target;
-	private double fleeSpeed;
-	private double targetDistance;
+public class ParticleFleePoint extends ParticleController {
 
-	public ParticleFleePoint(AMParticle particleEffect, AMVector3 fleePoint, double fleeSpeed, double targetDistance, int priority, boolean exclusive){
-		super(particleEffect, priority, exclusive);
-		this.target = fleePoint;
-		this.fleeSpeed = fleeSpeed;
-		this.targetDistance = targetDistance;
-	}
+    private AMVector3 target;
+    private double fleeSpeed;
+    private double targetDistance;
 
-	@Override
-	public void doUpdate(){
+    public ParticleFleePoint(AMParticle particleEffect, AMVector3 fleePoint, double fleeSpeed, double targetDistance,
+        int priority, boolean exclusive) {
+        super(particleEffect, priority, exclusive);
+        this.target = fleePoint;
+        this.fleeSpeed = fleeSpeed;
+        this.targetDistance = targetDistance;
+    }
 
-		double posX;
-		double posZ;
-		double posY = particle.posY;
-		double angle;
+    @Override
+    public void doUpdate() {
 
-		double distanceToTarget = new AMVector3(particle).distanceTo(target);
-		double deltaZ = particle.posZ - target.z;
-		double deltaX = particle.posX - target.x;
-		angle = Math.atan2(deltaZ, deltaX);
+        double posX;
+        double posZ;
+        double posY = particle.posY;
+        double angle;
 
-		double radians = angle;
+        double distanceToTarget = new AMVector3(particle).distanceTo(target);
+        double deltaZ = particle.posZ - target.z;
+        double deltaX = particle.posX - target.x;
+        angle = Math.atan2(deltaZ, deltaX);
 
-		posX = particle.posX + (fleeSpeed * Math.cos(radians));
-		posZ = particle.posZ + (fleeSpeed * Math.sin(radians));
-		double deltaY = target.y - posY;
-		double horizontalDistance = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ);
-		float pitchRotation = (float)(-Math.atan2(deltaY, horizontalDistance));
-		double pitchRadians = pitchRotation;
+        double radians = angle;
 
-		posY = particle.posY + (fleeSpeed * Math.sin(pitchRadians));
+        posX = particle.posX + (fleeSpeed * Math.cos(radians));
+        posZ = particle.posZ + (fleeSpeed * Math.sin(radians));
+        double deltaY = target.y - posY;
+        double horizontalDistance = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ);
+        float pitchRotation = (float) (-Math.atan2(deltaY, horizontalDistance));
+        double pitchRadians = pitchRotation;
 
-		if (distanceToTarget > targetDistance){
-			this.finish();
-		}else{
-			particle.setPosition(posX, posY, posZ);
-		}
-	}
+        posY = particle.posY + (fleeSpeed * Math.sin(pitchRadians));
 
-	@Override
-	public ParticleController clone(){
-		return new ParticleFleePoint(particle, target, fleeSpeed, targetDistance, priority, exclusive);
-	}
+        if (distanceToTarget > targetDistance) {
+            this.finish();
+        } else {
+            particle.setPosition(posX, posY, posZ);
+        }
+    }
+
+    @Override
+    public ParticleController clone() {
+        return new ParticleFleePoint(particle, target, fleeSpeed, targetDistance, priority, exclusive);
+    }
 
 }

@@ -1,22 +1,21 @@
 package am2.entities.ai.selectors;
 
-import am2.entities.EntityLightMage;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityCreeper;
 
-public class LightMageEntitySelector implements IEntitySelector{
+import am2.entities.EntityLightMage;
 
-	public static final LightMageEntitySelector instance = new LightMageEntitySelector();
+public class LightMageEntitySelector implements IEntitySelector {
 
-	private LightMageEntitySelector(){
-	}
+    public static final LightMageEntitySelector instance = new LightMageEntitySelector();
 
-	@Override
-	public boolean isEntityApplicable(Entity entity){
-		if (entity instanceof EntityCreeper || entity instanceof EntityLightMage)
-			return false;
-		return true;
-	}
+    private LightMageEntitySelector() {}
+
+    @Override
+    public boolean isEntityApplicable(Entity entity) {
+        if (entity instanceof EntityCreeper || entity instanceof EntityLightMage) return false;
+        return true;
+    }
 
 }

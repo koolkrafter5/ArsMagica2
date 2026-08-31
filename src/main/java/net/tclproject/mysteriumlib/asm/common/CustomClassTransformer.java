@@ -1,10 +1,5 @@
 package net.tclproject.mysteriumlib.asm.common;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-import net.tclproject.mysteriumlib.asm.core.*;
-
-import org.objectweb.asm.ClassWriter;
-
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,19 +9,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.tclproject.mysteriumlib.asm.core.ASMFix;
+import net.tclproject.mysteriumlib.asm.core.FixInserterClassVisitor;
+import net.tclproject.mysteriumlib.asm.core.TargetClassTransformer;
+
+import org.objectweb.asm.ClassWriter;
+
 /**
- * This class is responsible for inserting fixes into minecraft code 
+ * This class is responsible for inserting fixes into minecraft code
  * from the moment when forge deobfuscation was applied.
- * */
+ */
 public class CustomClassTransformer extends TargetClassTransformer implements IClassTransformer {
-	
-	/**An instance of itself that gets created every time the cunstructor gets called.*/
-	static CustomClassTransformer instance;
-	
-	/**A map of "method index" : "mcp method name" for all the methods in methods.csv.*/
+
+    /** An instance of itself that gets created every time the cunstructor gets called. */
+    static CustomClassTransformer instance;
+
+    /** A map of "method index" : "mcp method name" for all the methods in methods.csv. */
     private Map<Integer, String> methodsMap;
 
-    /**Transformers that will be executed after all the normal ones are.*/
+    /** Transformers that will be executed after all the normal ones are. */
     private static List<IClassTransformer> postTransformers = new ArrayList<IClassTransformer>();
 
     public CustomClassTransformer() {
@@ -45,16 +47,19 @@ public class CustomClassTransformer extends TargetClassTransformer implements IC
 
         this.metaReader = CustomLoadingPlugin.getMetaReader();
 
-        this.fixesMap.putAll(FirstClassTransformer.instance.getFixesMap()); // Puts all fixes loaded in FirstClassTransformer into this class.
-        FirstClassTransformer.instance.getFixesMap().clear();
+        this.fixesMap.putAll(FirstClassTransformer.instance.getFixesMap()); // Puts all fixes loaded in
+                                                                            // FirstClassTransformer into this class.
+        FirstClassTransformer.instance.getFixesMap()
+            .clear();
         FirstClassTransformer.instance.registeredBuiltinFixes = true;
     }
 
     /**
      * Loads method indexes and obfuscated method names from a methods.bin file.
+     * 
      * @throws IOException if the methods.bin file is not found.
      * @return A HashMap of "method index" : "mcp method name" for all the methods in methods.csv.
-     * */
+     */
     private HashMap<Integer, String> loadMethods() throws IOException {
         InputStream resourceStream = getClass().getResourceAsStream("/methods.bin");
         if (resourceStream == null) throw new IOException("Methods dictionary not found.");
@@ -74,23 +79,25 @@ public class CustomClassTransformer extends TargetClassTransformer implements IC
      * <p/>
      * Forge passes in the arguments and takes the return value of this method, unless you want some
      * special behavior you shouldn't interact with this method or modify it.
-     * */
+     */
     @Override
     public byte[] transform(String name, String deobfName, byte[] bytecode) {
         bytecode = transform(deobfName, bytecode);
         for (int i = 0; i < postTransformers.size(); i++) {
-            bytecode = postTransformers.get(i).transform(name, deobfName, bytecode);
+            bytecode = postTransformers.get(i)
+                .transform(name, deobfName, bytecode);
         }
         return bytecode;
     }
 
     /**
-     * Creates a custom Class Visitor to return custom method visitors to insert fixes. 
+     * Creates a custom Class Visitor to return custom method visitors to insert fixes.
      * Has custom logic to check if a method is the target method of a fix, accounting for an obfuscated name.
-     * */
+     */
     @Override
     public FixInserterClassVisitor createInserterClassVisitor(ClassWriter classWriter, List<ASMFix> fixes) {
         return new FixInserterClassVisitor(this, classWriter, fixes) {
+
             @Override
             protected boolean isTheTarget(ASMFix fix, String name, String descriptor) {
                 if (CustomLoadingPlugin.isObfuscated()) {
@@ -104,15 +111,16 @@ public class CustomClassTransformer extends TargetClassTransformer implements IC
         };
     }
 
-    /**Getter for methodsMap.*/
+    /** Getter for methodsMap. */
     public Map<Integer, String> getMethodNames() {
         return methodsMap;
     }
 
     /**
      * Gets a method index from a method name.
+     * 
      * @return the method index (or -1 if it's not found).
-     * */
+     */
     public static int getMethodIndex(String srgName) {
         if (srgName.startsWith("func_")) {
             int first = srgName.indexOf('_');
@@ -124,7 +132,8 @@ public class CustomClassTransformer extends TargetClassTransformer implements IC
     }
 
     /**
-     * Registers a transformer that will be executed after the normal transformers (including the deobfuscation transformer).
+     * Registers a transformer that will be executed after the normal transformers (including the deobfuscation
+     * transformer).
      */
     public static void registerPostTransformer(IClassTransformer transformer) {
         postTransformers.add(transformer);

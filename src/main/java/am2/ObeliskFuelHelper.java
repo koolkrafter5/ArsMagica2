@@ -1,34 +1,35 @@
 package am2;
 
-import am2.api.power.IObeliskFuelHelper;
-import net.minecraft.item.ItemStack;
-
 import java.util.HashMap;
 
-public class ObeliskFuelHelper implements IObeliskFuelHelper{
-	private HashMap<ItemStack, Integer> validFuels;
+import net.minecraft.item.ItemStack;
 
-	public static final ObeliskFuelHelper instance = new ObeliskFuelHelper();
+import am2.api.power.IObeliskFuelHelper;
 
-	private ObeliskFuelHelper(){
-		validFuels = new HashMap<ItemStack, Integer>();
-	}
+public class ObeliskFuelHelper implements IObeliskFuelHelper {
 
-	@Override
-	public void registerFuelType(ItemStack stack, int burnTime){
-		stack.stackSize = 0;
-		validFuels.put(stack.copy(), burnTime);
-	}
+    private HashMap<ItemStack, Integer> validFuels;
 
-	@Override
-	public int getFuelBurnTime(ItemStack stack){
-		if (stack == null)
-			return 0;
+    public static final ObeliskFuelHelper instance = new ObeliskFuelHelper();
 
-		for (ItemStack possibleFuel : validFuels.keySet()){
-			if (stack.getItem() == possibleFuel.getItem() && (possibleFuel.getItemDamage() == Short.MAX_VALUE || possibleFuel.getItemDamage() == stack.getItemDamage()))
-				return validFuels.get(possibleFuel);
-		}
-		return 0;
-	}
+    private ObeliskFuelHelper() {
+        validFuels = new HashMap<ItemStack, Integer>();
+    }
+
+    @Override
+    public void registerFuelType(ItemStack stack, int burnTime) {
+        stack.stackSize = 0;
+        validFuels.put(stack.copy(), burnTime);
+    }
+
+    @Override
+    public int getFuelBurnTime(ItemStack stack) {
+        if (stack == null) return 0;
+
+        for (ItemStack possibleFuel : validFuels.keySet()) {
+            if (stack.getItem() == possibleFuel.getItem() && (possibleFuel.getItemDamage() == Short.MAX_VALUE
+                || possibleFuel.getItemDamage() == stack.getItemDamage())) return validFuels.get(possibleFuel);
+        }
+        return 0;
+    }
 }

@@ -1,6 +1,7 @@
 package am2.blocks;
 
-import am2.texture.ResourceManager;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWood;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -13,40 +14,40 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.List;
+import am2.texture.ResourceManager;
 
-public class WitchwoodPlanks extends BlockWood{
+public class WitchwoodPlanks extends BlockWood {
 
-	public WitchwoodPlanks(){
-		super();
-		this.setHardness(2.0f);
-		this.setResistance(2.0f);
-		this.setHarvestLevel("axe", 2);
-		this.setStepSound(Block.soundTypeWood);
-	}
+    public WitchwoodPlanks() {
+        super();
+        this.setHardness(2.0f);
+        this.setResistance(2.0f);
+        this.setHarvestLevel("axe", 2);
+        this.setStepSound(Block.soundTypeWood);
+    }
 
-	@Override
-	public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face){
-		return 0;
-	}
+    @Override
+    public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
+        return 0;
+    }
 
-	@Override
-	public void registerBlockIcons(IIconRegister IIconRegister){
-		this.blockIcon = ResourceManager.RegisterTexture("plankWitchwood", IIconRegister);
-	}
+    @Override
+    public void registerBlockIcons(IIconRegister IIconRegister) {
+        this.blockIcon = ResourceManager.RegisterTexture("plankWitchwood", IIconRegister);
+    }
 
-	@Override
-	public IIcon getIcon(int par1, int par2){
-		return this.blockIcon;
-	}
+    @Override
+    public IIcon getIcon(int par1, int par2) {
+        return this.blockIcon;
+    }
 
-	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List){
-		par3List.add(new ItemStack(this));
-	}
+    @Override
+    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
+        par3List.add(new ItemStack(this));
+    }
 
-	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z){
-		return new ItemStack(this);
-	}
+    @Override
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+        return new ItemStack(this);
+    }
 }

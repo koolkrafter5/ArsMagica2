@@ -1,32 +1,32 @@
 package am2.buffs;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 
-public class ArsMagicaPotion extends Potion{
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-	private ResourceLocation potionTexture;
+public class ArsMagicaPotion extends Potion {
 
-	protected ArsMagicaPotion(int par1, boolean par2, int par3){
-		super(par1, par2, par3);
-	}
+    private ResourceLocation potionTexture;
 
-	public void _setIconIndex(int row, int col){
-		this.setIconIndex(row, col);
-	}
+    protected ArsMagicaPotion(int par1, boolean par2, int par3) {
+        super(par1, par2, par3);
+    }
 
-	public void setTextureSheet(String texturesheet){
-		potionTexture = new ResourceLocation("arsmagica2", texturesheet);
-	}
+    public void _setIconIndex(int row, int col) {
+        this.setIconIndex(row, col);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getStatusIconIndex(){
-		if (potionTexture != null)
-			Minecraft.getMinecraft().renderEngine.bindTexture(potionTexture);
-		return super.getStatusIconIndex();
-	}
+    public void setTextureSheet(String texturesheet) {
+        potionTexture = new ResourceLocation("arsmagica2", texturesheet);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getStatusIconIndex() {
+        if (potionTexture != null) Minecraft.getMinecraft().renderEngine.bindTexture(potionTexture);
+        return super.getStatusIconIndex();
+    }
 }
