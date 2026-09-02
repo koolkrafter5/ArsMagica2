@@ -59,4 +59,6 @@ public class AMPacketIDs {
     public static final byte SYNCMAPTOCLIENTS = 65;
     public static final byte SYNCWORLDDATATOCLIENTS = 67;
     public static final byte SYNCCOMPENDIUMRESPONSE = 70;
+    public static final byte COMPENDIUMPROGRESSPARTICLES = 71;
+    public static final byte COMPENDIUMCOMPLETECRAFTING = 72;
 }

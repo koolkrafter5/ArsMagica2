@@ -12,14 +12,11 @@ import net.minecraft.item.ItemStack;
 
 import am2.blocks.BlocksCommonProxy;
 import am2.items.ItemsCommonProxy;
-import am2.particles.AMParticle;
-import am2.particles.ParticleArcToEntity;
-import am2.particles.ParticleColorShift;
-import am2.particles.ParticleHoldPosition;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import am2.network.AMNetHandler;
 
 public class ItemFrameWatcher {
+
+    public static ItemFrameWatcher INSTANCE = new ItemFrameWatcher();
 
     private final HashMap<EntityItemFrameComparator, Integer> watchedFrames;
     private final ArrayList<EntityItemFrameComparator> queuedAddFrames;
@@ -28,9 +25,9 @@ public class ItemFrameWatcher {
     private static final int processTime = 800;
 
     public ItemFrameWatcher() {
-        watchedFrames = new HashMap<EntityItemFrameComparator, Integer>();
-        queuedAddFrames = new ArrayList<EntityItemFrameComparator>();
-        queuedRemoveFrames = new ArrayList<EntityItemFrameComparator>();
+        watchedFrames = new HashMap<>();
+        queuedAddFrames = new ArrayList<>();
+        queuedRemoveFrames = new ArrayList<>();
     }
 
     public void checkWatchedFrames() {
@@ -45,7 +42,7 @@ public class ItemFrameWatcher {
 
             if (frameComp == null || frameComp.frame == null || frameComp.frame.worldObj == null) continue;
 
-            if (!frameComp.frame.worldObj.isRemote || time >= processTime) toRemove.add(frameComp);
+            if (time >= processTime) toRemove.add(frameComp);
 
             if (frameIsValid(frameComp.frame)) {
                 if (!checkFrameRadius(frameComp)) {
@@ -95,22 +92,17 @@ public class ItemFrameWatcher {
                         watchedFrames.put(frameComp, time);
 
                         if (time >= processTime) {
-                            if (!frame.worldObj.isRemote) {
-                                frame.setDisplayedItem(new ItemStack(ItemsCommonProxy.arcaneCompendium));
-                                return true;
-                            }
+                            frame.setDisplayedItem(new ItemStack(ItemsCommonProxy.arcaneCompendium));
+                            return true;
                         } else {
                             shouldRemove = false;
-                            if (frame.worldObj.isRemote) {
-                                spawnCompendiumProgressParticles(
-                                    frame,
-                                    (int) frame.posX + i,
-                                    (int) frame.posY + j,
-                                    (int) frame.posZ + k);
-                            }
+                            AMNetHandler.INSTANCE.sendCompendiumProgressParticlesToClients(
+                                (int) frame.posX + i,
+                                (int) frame.posY + j,
+                                (int) frame.posZ + k,
+                                frame);
                         }
                     }
-
                 }
             }
         }
@@ -128,8 +120,7 @@ public class ItemFrameWatcher {
     private void updateQueuedChanges() {
 
         // safe copy to avoid CME
-        EntityItemFrameComparator[] toAdd = queuedAddFrames
-            .toArray(new EntityItemFrameComparator[queuedAddFrames.size()]);
+        EntityItemFrameComparator[] toAdd = queuedAddFrames.toArray(new EntityItemFrameComparator[0]);
         queuedAddFrames.clear();
 
         for (EntityItemFrameComparator comp : toAdd) {
@@ -138,8 +129,7 @@ public class ItemFrameWatcher {
         }
 
         // safe copy to avoid CME, again with queued removes
-        EntityItemFrameComparator[] toRemove = queuedRemoveFrames
-            .toArray(new EntityItemFrameComparator[queuedRemoveFrames.size()]);
+        EntityItemFrameComparator[] toRemove = queuedRemoveFrames.toArray(new EntityItemFrameComparator[0]);
         queuedRemoveFrames.clear();
 
         for (EntityItemFrameComparator comp : toRemove) {
@@ -147,12 +137,11 @@ public class ItemFrameWatcher {
             if (time != null && time >= processTime
                 && comp.frame != null
                 && !comp.frame.isDead
-                && comp.frame.worldObj.isRemote
                 && (comp.frame.getDisplayedItem() != null && (comp.frame.getDisplayedItem()
                     .getItem() == Items.book
                     || comp.frame.getDisplayedItem()
                         .getItem() == ItemsCommonProxy.arcaneCompendium))) {
-                spawnCompendiumCompleteParticles(comp.frame);
+                AMNetHandler.INSTANCE.sendCompendiumCompleteParticlesToClients(comp.frame);
             }
             watchedFrames.remove(comp);
         }
@@ -166,37 +155,7 @@ public class ItemFrameWatcher {
         queuedRemoveFrames.add(new EntityItemFrameComparator(frame));
     }
 
-    @SideOnly(Side.CLIENT)
-    public void spawnCompendiumProgressParticles(EntityItemFrame frame, int x, int y, int z) {
-        AMParticle particle = (AMParticle) AMCore.proxy.particleManager
-            .spawn(frame.worldObj, "symbols", x + 0.5, y + 0.5, z + 0.5);
-        if (particle != null) {
-            particle.setIgnoreMaxAge(true);
-            // particle.AddParticleController(new ParticleApproachEntity(particle, frame, 0.02f, 0.04f, 1,
-            // false).setKillParticleOnFinish(true));
-            particle.AddParticleController(
-                new ParticleArcToEntity(particle, 1, frame, false).SetSpeed(0.02f)
-                    .setKillParticleOnFinish(true));
-            particle.setRandomScale(0.05f, 0.12f);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void spawnCompendiumCompleteParticles(EntityItemFrame frame) {
-        AMParticle particle = (AMParticle) AMCore.proxy.particleManager
-            .spawn(frame.worldObj, "radiant", frame.posX, frame.posY, frame.posZ);
-        if (particle != null) {
-            particle.setIgnoreMaxAge(false);
-            particle.setMaxAge(40);
-            particle.setParticleScale(0.3f);
-            // particle.AddParticleController(new ParticleApproachEntity(particle, frame, 0.02f, 0.04f, 1,
-            // false).setKillParticleOnFinish(true));
-            particle.AddParticleController(new ParticleHoldPosition(particle, 40, 1, false));
-            particle.AddParticleController(new ParticleColorShift(particle, 1, false).SetShiftSpeed(0.2f));
-        }
-    }
-
-    private class EntityItemFrameComparator {
+    private static class EntityItemFrameComparator {
 
         private final EntityItemFrame frame;
 

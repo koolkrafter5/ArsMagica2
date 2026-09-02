@@ -51,8 +51,6 @@ public class ServerTickHandler {
             ItemsCommonProxy.crystalPhylactery.getSpawnableEntities(MinecraftServer.getServer().worldServers[0]);
             firstTick = false;
         }
-
-        AMCore.proxy.itemFrameWatcher.checkWatchedFrames();
     }
 
     private void gameTick_End() {

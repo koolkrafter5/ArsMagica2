@@ -200,8 +200,8 @@ public class AMEventHandler {
                 event.entity
                     .registerExtendedProperties(SkillData.identifier, new SkillData((EntityPlayer) event.entity));
             }
-        } else if (event.entity instanceof EntityItemFrame) {
-            AMCore.proxy.itemFrameWatcher.startWatchingFrame((EntityItemFrame) event.entity);
+        } else if (event.entity instanceof EntityItemFrame && !event.entity.worldObj.isRemote) {
+            ItemFrameWatcher.INSTANCE.startWatchingFrame((EntityItemFrame) event.entity);
         }
     }
 
@@ -1697,8 +1697,9 @@ public class AMEventHandler {
 
     @SubscribeEvent
     public void onEntityInteract(EntityInteractEvent event) {
-        if (!(event.entityLiving instanceof FakePlayer) && event.target instanceof EntityItemFrame)
-            AMCore.proxy.itemFrameWatcher.startWatchingFrame((EntityItemFrame) event.target);
+        if (!(event.entityLiving instanceof FakePlayer) && event.target instanceof EntityItemFrame
+            && !event.target.worldObj.isRemote)
+            ItemFrameWatcher.INSTANCE.startWatchingFrame((EntityItemFrame) event.target);
     }
 
     @SubscribeEvent

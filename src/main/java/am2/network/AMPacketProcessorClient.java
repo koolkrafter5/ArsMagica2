@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -41,8 +42,11 @@ import am2.guis.ArsMagicaGuiIdList;
 import am2.guis.GuiHudCustomization;
 import am2.lore.ArcaneCompendium;
 import am2.particles.AMParticle;
+import am2.particles.ParticleArcToEntity;
 import am2.particles.ParticleChangeSize;
+import am2.particles.ParticleColorShift;
 import am2.particles.ParticleFadeOut;
+import am2.particles.ParticleHoldPosition;
 import am2.particles.ParticleLeaveParticleTrail;
 import am2.particles.ParticleMoveOnHeading;
 import am2.playerextensions.AffinityData;
@@ -187,6 +191,12 @@ public class AMPacketProcessorClient extends AMPacketProcessorServer {
                 case AMPacketIDs.OBELISK_DATA:
                     handleObeliskData(remaining);
                     break;
+                case AMPacketIDs.COMPENDIUMPROGRESSPARTICLES:
+                    handleCompendiumProgressParticles(remaining);
+                    break;
+                case AMPacketIDs.COMPENDIUMCOMPLETECRAFTING:
+                    handleCompendiumCompleteCrafting(remaining);
+                    break;
             }
         } catch (Throwable t) {
             LogHelper.error("Client Packet Failed to Handle!");
@@ -198,6 +208,55 @@ public class AMPacketProcessorClient extends AMPacketProcessorServer {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
+        }
+    }
+
+    private void handleCompendiumCompleteCrafting(byte[] remaining) {
+        World world = Minecraft.getMinecraft().theWorld;
+        if (world == null) {
+            return;
+        }
+
+        AMDataReader rdr = new AMDataReader(remaining, false);
+        Entity entity = world.getEntityByID(rdr.getInt());
+        if (!(entity instanceof EntityItemFrame frame)) {
+            return;
+        }
+
+        AMParticle particle = (AMParticle) AMCore.proxy.particleManager
+            .spawn(frame.worldObj, "radiant", frame.posX, frame.posY, frame.posZ);
+        if (particle != null) {
+            particle.setIgnoreMaxAge(false);
+            particle.setMaxAge(40);
+            particle.setParticleScale(0.3f);
+            particle.AddParticleController(new ParticleHoldPosition(particle, 40, 1, false));
+            particle.AddParticleController(new ParticleColorShift(particle, 1, false).SetShiftSpeed(0.2f));
+        }
+    }
+
+    private void handleCompendiumProgressParticles(byte[] remaining) {
+        World world = Minecraft.getMinecraft().theWorld;
+        if (world == null) {
+            return;
+        }
+
+        AMDataReader rdr = new AMDataReader(remaining, false);
+        Entity entity = world.getEntityByID(rdr.getInt());
+        if (!(entity instanceof EntityItemFrame frame)) {
+            return;
+        }
+
+        int x = rdr.getInt();
+        int y = rdr.getInt();
+        int z = rdr.getInt();
+        AMParticle particle = (AMParticle) AMCore.proxy.particleManager
+            .spawn(frame.worldObj, "symbols", x + 0.5, y + 0.5, z + 0.5);
+        if (particle != null) {
+            particle.setIgnoreMaxAge(true);
+            particle.AddParticleController(
+                new ParticleArcToEntity(particle, 1, frame, false).SetSpeed(0.02f)
+                    .setKillParticleOnFinish(true));
+            particle.setRandomScale(0.05f, 0.12f);
         }
     }
 

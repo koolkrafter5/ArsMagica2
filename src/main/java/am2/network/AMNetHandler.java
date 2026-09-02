@@ -3,6 +3,7 @@ package am2.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -383,5 +384,32 @@ public class AMNetHandler {
 
     public void sendAffinityActivate() {
         sendPacketToServer(AMPacketIDs.AFFINITY_ACTIVATE, new byte[0]);
+    }
+
+    public void sendCompendiumProgressParticlesToClients(int x, int y, int z, EntityItemFrame frame) {
+        AMDataWriter writer = new AMDataWriter().add(frame.getEntityId())
+            .add(x)
+            .add(y)
+            .add(z);
+        sendPacketToAllClientsNear(
+            frame.worldObj.provider.dimensionId,
+            x,
+            y,
+            z,
+            64,
+            AMPacketIDs.COMPENDIUMPROGRESSPARTICLES,
+            writer.generate());
+    }
+
+    public void sendCompendiumCompleteParticlesToClients(EntityItemFrame frame) {
+        AMDataWriter writer = new AMDataWriter().add(frame.getEntityId());
+        sendPacketToAllClientsNear(
+            frame.worldObj.provider.dimensionId,
+            frame.posX,
+            frame.posY,
+            frame.posZ,
+            64,
+            AMPacketIDs.COMPENDIUMCOMPLETECRAFTING,
+            writer.generate());
     }
 }

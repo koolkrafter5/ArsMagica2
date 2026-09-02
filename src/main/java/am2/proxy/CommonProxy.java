@@ -27,7 +27,6 @@ import am2.AMEventHandler;
 import am2.AMWorldEventHandler;
 import am2.EnervatorRecipeHelper;
 import am2.EntityItemWatcher;
-import am2.ItemFrameWatcher;
 import am2.ObeliskFuelHelper;
 import am2.PlayerTracker;
 import am2.ShrinkHandler;
@@ -67,6 +66,7 @@ import am2.playerextensions.ExtendedProperties;
 import am2.power.PowerNodeCache;
 import am2.power.PowerNodeEntry;
 import am2.proxy.gui.ServerGuiManager;
+import am2.proxy.tick.CommonTickHandler;
 import am2.proxy.tick.ServerTickHandler;
 import am2.spell.SkillManager;
 import am2.spell.SkillTreeManager;
@@ -93,7 +93,6 @@ public class CommonProxy {
     public AM2WorldDecorator worldGen;
     public AMEnchantments enchantments;
 
-    public ItemFrameWatcher itemFrameWatcher;
     protected ProxyUtilitiesCommon utils;
     public static EntityManager entities;
     public static ServerGuiManager guiManager;
@@ -109,7 +108,6 @@ public class CommonProxy {
         teamHostility = new HashMap<String, String>();
         playerTracker = new PlayerTracker();
         particleManager = new ParticleManagerServer();
-        itemFrameWatcher = new ItemFrameWatcher();
         pendingFlickerLinks = new ArrayList<AMVector3>();
         cwCopyLoc = null;
     }
@@ -243,6 +241,12 @@ public class CommonProxy {
             .bus()
             .register(serverTickHandler);
         MinecraftForge.EVENT_BUS.register(serverTickHandler);
+
+        CommonTickHandler commonTickHandler = new CommonTickHandler();
+        FMLCommonHandler.instance()
+            .bus()
+            .register(commonTickHandler);
+        MinecraftForge.EVENT_BUS.register(commonTickHandler);
 
         AMNetHandler.INSTANCE.registerChannels(new AMPacketProcessorServer());
     }

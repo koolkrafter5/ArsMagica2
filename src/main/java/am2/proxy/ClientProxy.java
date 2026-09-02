@@ -65,6 +65,7 @@ import am2.particles.ParticleManagerClient;
 import am2.power.PowerNodeEntry;
 import am2.proxy.gui.ClientGuiManager;
 import am2.proxy.tick.ClientTickHandler;
+import am2.proxy.tick.CommonTickHandler;
 import am2.spell.SpellUtils;
 import am2.spell.components.Telekinesis;
 import am2.texture.SpellIconManager;
@@ -105,6 +106,12 @@ public class ClientProxy extends CommonProxy {
         FMLCommonHandler.instance()
             .bus()
             .register(compendiumHandler);
+
+        CommonTickHandler commonTickHandler = new CommonTickHandler();
+        FMLCommonHandler.instance()
+            .bus()
+            .register(commonTickHandler);
+        MinecraftForge.EVENT_BUS.register(commonTickHandler);
     }
 
     @Override
